@@ -123,7 +123,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return void
 	 */
 	function validate_bank_response( $request ) {
-		$order	= new WC_Order( $request['VK_STAMP'] );
+		$order	= wc_get_order( $request['VK_STAMP'] );
 
 		if( in_array( $order->get_status(), array( 'processing', 'cancelled' ) ) ) {
 			wp_redirect( $this->get_return_url( $order ) );

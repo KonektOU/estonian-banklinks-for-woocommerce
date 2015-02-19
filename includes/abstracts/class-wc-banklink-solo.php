@@ -96,7 +96,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	 */
 	function generate_submit_form( $order_id ) {
 		// Get the order
-		$order			= new WC_Order( $order_id );
+		$order			= wc_get_order( $order_id );
 
 		// Return URL
 		$return_url		= $this->get_return_url( $order );
@@ -162,7 +162,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		// Validate the results with public key
 		$validationResult = $this->validate_banklink_payment( $request, $this->get_option( 'vk_pubkey' ) );
 
-		$order	= new WC_Order( $request['SOLOPMT_RETURN_STAMP'] );
+		$order	= wc_get_order( $request['SOLOPMT_RETURN_STAMP'] );
 
 		// Check validation
 		if ( isset( $validationResult['payment'] ) && $validationResult['payment'] == 'success' ) {
