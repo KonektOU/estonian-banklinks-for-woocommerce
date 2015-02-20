@@ -3,7 +3,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	function __construct() {
 
 		$this->has_fields  = FALSE;
-		$this->notify_url  = WC()->api_request_url( get_class() );
+		$this->notify_url  = WC()->api_request_url( get_class( $this ) );
 
 		// Get the settings
 		$this->title       = $this->get_option( 'title' );
