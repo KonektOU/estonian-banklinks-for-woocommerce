@@ -200,9 +200,6 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Get the order
 		$order      = wc_get_order( $order_id );
 
-		// Return URL
-		$return_url = $this->get_return_url( $order );
-
 		// Current time
 		$datetime   = new DateTime( 'NOW' );
 

@@ -98,9 +98,6 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		// Get the order
 		$order			= wc_get_order( $order_id );
 
-		// Return URL
-		$return_url		= $this->get_return_url( $order );
-
 		// Set MAC fields
 		$macFields		= array(
 			'SOLOPMT_VERSION'		=> '0003',
@@ -112,9 +109,9 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 			'SOLOPMT_REF'			=> $this->generate_ref_num( $order->id ),
 			'SOLOPMT_DATE'			=> 'EXPRESS',
 			'SOLOPMT_MSG'			=> sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), $order->id ),
-			'SOLOPMT_RETURN'		=> $return_url,
-			'SOLOPMT_CANCEL'		=> $return_url,
-			'SOLOPMT_REJECT'		=> $return_url,
+			'SOLOPMT_RETURN'		=> $this->notify_url,
+			'SOLOPMT_CANCEL'		=> $this->notify_url,
+			'SOLOPMT_REJECT'		=> $this->notify_url,
 			'SOLOPMT_CONFIRM'		=> 'YES',
 			'SOLOPMT_KEYVERS'		=> $this->get_option( 'solopmt_keyvers' ),
 			'SOLOPMT_CUR'			=> get_woocommerce_currency(),
@@ -132,7 +129,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		}
 
 		// Show "Pay" button and end the form
-		$form	.= '<input type="submit" name="submi" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
+		$form	.= '<input type="submit" name="send_banlink" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
 		$form	.= "</form>";
 
 		// Add inline JS
