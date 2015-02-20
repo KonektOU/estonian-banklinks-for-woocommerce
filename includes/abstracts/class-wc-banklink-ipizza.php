@@ -231,6 +231,20 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Encode signature
 		$macFields['VK_MAC'] = base64_encode( $signature );
 
+		// language support: informs bank of preferred UI language
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
+			// WPML
+			$macFields['VK_LANG'] = 'ENG';
+			if ( ICL_LANGUAGE_CODE == 'et' ) $macFields['VK_LANG'] = 'EST';
+			if ( ICL_LANGUAGE_CODE == 'ru' ) $macFields['VK_LANG'] = 'RUS';
+		} elseif ( function_exists( 'qtrans_getLanguage' ) ) {
+			// qtranslate
+			$lang = qtrans_getLanguage();
+			$macFields['VK_LANG'] = 'ENG';
+			if ( $lang == 'et' ) $macFields['VK_LANG'] = 'EST';
+			if ( $lang == 'ru' ) $macFields['VK_LANG'] = 'RUS';
+		}
+
 		// Start form
 		$post = '<form action="'. $this->get_option( 'vk_dest' ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
