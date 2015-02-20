@@ -8,9 +8,6 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	);
 
 	function __construct() {
-		// Payment listener/API hook
-		add_action( 'woocommerce_api_wc_gateway_' . $this->id, array( $this, 'check_bank_response' ) );
-
 		parent::__construct();
 	}
 
@@ -21,55 +18,55 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 */
 	function init_form_fields() {
 		// Set fields
-		$this->form_fields	= array(
-			'enabled'			=> array(
-				'title'			=> __( 'Enable banklink', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'checkbox',
-				'default'		=> 'no',
-				'label'			=> __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
+		$this->form_fields = array(
+			'enabled'         => array(
+				'title'       => __( 'Enable banklink', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'checkbox',
+				'default'     => 'no',
+				'label'       => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
 			),
-			'title'				=> array(
-				'title'			=> __( 'Title', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'text',
-				'description'	=> __( 'This controls the title which user sees during checkout.', 'wc-gateway-estonia-banklink' ),
-				'default'		=> $this->get_title(),
-				'desc_tip'		=> TRUE
+			'title'           => array(
+				'title'       => __( 'Title', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'description' => __( 'This controls the title which user sees during checkout.', 'wc-gateway-estonia-banklink' ),
+				'default'     => $this->get_title(),
+				'desc_tip'    => TRUE
 			),
-			'description'		=> array(
-				'title'			=> __( 'Customer message', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'textarea',
-				'default'		=> '',
-				'description'	=> __( 'This will be visible when user selects this payment gateway during checkout.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'		=> TRUE
+			'description'     => array(
+				'title'       => __( 'Customer message', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'textarea',
+				'default'     => '',
+				'description' => __( 'This will be visible when user selects this payment gateway during checkout.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
 			),
-			'vk_dest'			=> array(
-				'title'			=> __( 'Request URL', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'text',
-				'default'		=> '',
-				'description'	=> 'VK_DEST',
-				'desc_tip'		=> TRUE
+			'vk_dest'         => array(
+				'title'       => __( 'Request URL', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'default'     => '',
+				'description' => 'VK_DEST',
+				'desc_tip'    => TRUE
 			),
-			'vk_snd_id'			=> array(
-				'title'			=> __( 'Account ID', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'text',
-				'default'		=> '',
-				'description'	=> 'VK_SND_ID',
-				'desc_tip'		=> TRUE
+			'vk_snd_id'       => array(
+				'title'       => __( 'Account ID', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'default'     => '',
+				'description' => 'VK_SND_ID',
+				'desc_tip'    => TRUE
 			),
-			'vk_privkey'		=> array(
-				'title'			=> __( 'Your Private Key', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'textarea',
-				'default'		=> ''
+			'vk_privkey'      => array(
+				'title'       => __( 'Your Private Key', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'textarea',
+				'default'     => ''
 			),
-			'vk_pass'			=> array(
-				'title'			=> __( 'Private Key Password', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'text',
-				'default'		=> ''
+			'vk_pass'         => array(
+				'title'       => __( 'Private Key Password', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'default'     => ''
 			),
-			'vk_pubkey'			=> array(
-				'title'			=> __( 'Bank`s Public Key', 'wc-gateway-estonia-banklink' ),
-				'type'			=> 'textarea',
-				'default'		=> ''
+			'vk_pubkey'       => array(
+				'title'       => __( 'Bank`s Public Key', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'textarea',
+				'default'     => ''
 			)
 		);
 	}
@@ -123,10 +120,11 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return void
 	 */
 	function validate_bank_response( $request ) {
-		$order	= wc_get_order( $request['VK_STAMP'] );
+		$order      = wc_get_order( $request['VK_STAMP'] );
+		$return_url = $this->get_return_url( $order );
 
 		if( in_array( $order->get_status(), array( 'processing', 'cancelled' ) ) ) {
-			wp_redirect( $this->get_return_url( $order ) );
+			wp_redirect( $return_url );
 
 			exit;
 		}
@@ -147,7 +145,10 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 
 		// Redirect to order details
-		if( isset( $request['VK_AUTO'] ) && $request['VK_AUTO'] == 'N' ) wp_redirect( $this->get_return_url( $order ) );
+		if( isset( $request['VK_AUTO'] ) && $request['VK_AUTO'] == 'N' ) {
+			wp_redirect( $return_url );
+		}
+
 		exit;
 	}
 
@@ -196,36 +197,34 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return string            HTML form
 	 */
 	function generate_submit_form( $order_id ) {
-		global $woocommerce;
-
 		// Get the order
-		$order			= wc_get_order( $order_id );
+		$order      = wc_get_order( $order_id );
 
 		// Return URL
-		$return_url		= $this->get_return_url( $order );
+		$return_url = $this->get_return_url( $order );
 
 		// Current time
-		$datetime       = new DateTime( 'NOW' );
+		$datetime   = new DateTime( 'NOW' );
 
 		// Set MAC fields
-		$macFields		= array(
-			'VK_SERVICE'	=> '1012',
-			'VK_VERSION'	=> '008',
-			'VK_SND_ID'		=> $this->get_option( 'vk_snd_id' ),
-			'VK_STAMP'		=> $order->id,
-			'VK_AMOUNT'		=> round( $order->get_total(), 2 ),
-			'VK_CURR'		=> get_woocommerce_currency(),
-			'VK_REF'		=> $this->generate_ref_num( $order->id ),
-			'VK_MSG'		=> sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), $order->id ),
-			'VK_RETURN'		=> $this->notify_url,
-			'VK_CANCEL'		=> $this->notify_url,
-			'VK_DATETIME'	=> $datetime->format( DateTime::ISO8601 )
+		$macFields  = array(
+			'VK_SERVICE'  => '1012',
+			'VK_VERSION'  => '008',
+			'VK_SND_ID'   => $this->get_option( 'vk_snd_id' ),
+			'VK_STAMP'    => $order->id,
+			'VK_AMOUNT'   => round( $order->get_total(), 2 ),
+			'VK_CURR'     => get_woocommerce_currency(),
+			'VK_REF'      => $this->generate_ref_num( $order->id ),
+			'VK_MSG'      => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), $order->id ),
+			'VK_RETURN'   => $this->notify_url,
+			'VK_CANCEL'   => $this->notify_url,
+			'VK_DATETIME' => $datetime->format( DateTime::ISO8601 )
 		);
 
 		// Generate MAC string from the private key
-		$key		= openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
-		$signature	= '';
-		$macString	= $this->generate_mac_string( $macFields );
+		$key        = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
+		$signature  = '';
+		$macString  = $this->generate_mac_string( $macFields );
 
 		// Try to sign the macstring
 		if ( ! openssl_sign( $macString, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
@@ -233,10 +232,10 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 
 		// Encode signature
-		$macFields['VK_MAC']	= base64_encode( $signature );
+		$macFields['VK_MAC'] = base64_encode( $signature );
 
 		// Start form
-		$post	= '<form action="'. $this->get_option( 'vk_dest' ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
+		$post = '<form action="'. $this->get_option( 'vk_dest' ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add fields to form inputs
 		foreach ( $macFields as $name => $value ) {
@@ -244,8 +243,8 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 
 		// Show "Pay" button and end the form
-		$post	.= '<input type="submit" name="submi" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
-		$post	.= "</form>";
+		$post .= '<input type="submit" name="send_banklink" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
+		$post .= "</form>";
 
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );

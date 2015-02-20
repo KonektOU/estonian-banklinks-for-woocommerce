@@ -14,6 +14,9 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 		$this->init_form_fields();
 		$this->init_settings();
 
+		// Payment listener/API hook
+		add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ),      array( $this, 'check_bank_response' ) );
+
 		// Actions
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_receipt_' . $this->id,                         array( $this, 'receipt_page' ) );
@@ -47,12 +50,13 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 
 	/**
 	 * Payment processing
+	 *
 	 * @param  integer $order_id Order ID
 	 * @return array             Redirect URL and result (success)
 	 */
 	function process_payment( $order_id ) {
 		// Get the order
-		$order		= new WC_Order( $order_id );
+		$order = wc_get_order( $order_id );
 
 		// Redirect
 		return array(
