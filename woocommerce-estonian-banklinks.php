@@ -27,7 +27,7 @@ function wc_estonian_gateways() {
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-nordea-gateway.php';
 
 	// Other
-	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-maksekeskus-gateway.php';
+	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-maksekeskus-redirect-gateway.php';
 
 	/**
 	 * Register gateways
@@ -41,7 +41,7 @@ function wc_estonian_gateways() {
 		$gateways[] = 'WC_Banklink_SEB_Gateway';
 		$gateways[] = 'WC_Banklink_Swedbank_Gateway';
 		$gateways[] = 'WC_Banklink_Nordea_Gateway';
-		$gateways[] = 'WC_Banklink_Maksekeskus_Gateway';
+		$gateways[] = 'WC_Banklink_Maksekeskus_Redirect_Gateway';
 
 		return $gateways;
 	}

@@ -1,5 +1,5 @@
 <?php
-class WC_Banklink_Maksekeskus_Gateway extends WC_Banklink {
+class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	private $request_variable_order = array( 'shopId', 'paymentId', 'amount' );
 	private $response_variable_order = array( 'paymentId', 'amount', 'status' );
 
@@ -10,7 +10,6 @@ class WC_Banklink_Maksekeskus_Gateway extends WC_Banklink {
 
 		parent::__construct();
 	}
-
 
 	/**
 	 * Set settings fields
