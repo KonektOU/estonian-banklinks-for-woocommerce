@@ -79,6 +79,6 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	function is_available() {
-		return $this->get_option( 'enabled' ) != 'no';
+		return $this->get_option( 'enabled', 'no' ) != 'no';
 	}
 }
