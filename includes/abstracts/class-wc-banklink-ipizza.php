@@ -7,6 +7,8 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		1911 => array( 'VK_SERVICE', 'VK_VERSION', 'VK_SND_ID', 'VK_REC_ID', 'VK_STAMP', 'VK_REF', 'VK_MSG' )
 	);
 
+	private $lang_codes = array( 'et' => 'EST', 'en' => 'ENG', 'ru' => 'RUS' );
+
 	function __construct() {
 		parent::__construct();
 	}
@@ -17,6 +19,12 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return void
 	 */
 	function init_form_fields() {
+
+		// prepare locale info
+		$locale = get_locale();
+		if ( strlen( $locale ) > 2 )
+			$locale = substr( $locale, 0, 2 );
+
 		// Set fields
 		$this->form_fields = array(
 			'enabled'         => array(
@@ -67,7 +75,14 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 				'title'       => __( 'Bank`s Public Key', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'textarea',
 				'default'     => ''
-			)
+			),
+			'vk_lang'         => array(
+				'title'       => __( 'Default language', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'default'     => $locale,
+				'description' => __( 'Default UI language locale sent to the bank. Currently supported: et, en, ru. Defaults to et.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
+			),
 		);
 	}
 
@@ -232,18 +247,14 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$macFields['VK_MAC'] = base64_encode( $signature );
 
 		// language support: informs bank of preferred UI language
-		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
-			// WPML
-			$macFields['VK_LANG'] = 'ENG';
-			if ( ICL_LANGUAGE_CODE == 'et' ) $macFields['VK_LANG'] = 'EST';
-			if ( ICL_LANGUAGE_CODE == 'ru' ) $macFields['VK_LANG'] = 'RUS';
-		} elseif ( function_exists( 'qtrans_getLanguage' ) ) {
-			// qtranslate
-			$lang = qtrans_getLanguage();
-			$macFields['VK_LANG'] = 'ENG';
-			if ( $lang == 'et' ) $macFields['VK_LANG'] = 'EST';
-			if ( $lang == 'ru' ) $macFields['VK_LANG'] = 'RUS';
-		}
+		$lang = $this->get_option( 'vk_lang' );
+
+		if ( defined( 'ICL_LANGUAGE_CODE' ) )
+			$lang = ICL_LANGUAGE_CODE; // WPML
+		elseif ( function_exists( 'qtrans_getLanguage' ) )
+			$lang = qtrans_getLanguage(); // qtranslate
+
+		$macFields['VK_LANG'] = isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : $this->lang_codes[0];
 
 		// Start form
 		$post = '<form action="'. $this->get_option( 'vk_dest' ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
