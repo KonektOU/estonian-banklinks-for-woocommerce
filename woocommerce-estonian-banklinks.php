@@ -33,6 +33,7 @@ function wc_estonian_gateways() {
 	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-lhv-gateway.php';
 	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-seb-gateway.php';
 	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-swedbank-gateway.php';
+	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-krediidipank-gateway.php';
 
 	// Solo
 	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-nordea-gateway.php';
@@ -51,6 +52,7 @@ function wc_estonian_gateways() {
 		$gateways[] = 'WC_Banklink_LHV_Gateway';
 		$gateways[] = 'WC_Banklink_SEB_Gateway';
 		$gateways[] = 'WC_Banklink_Swedbank_Gateway';
+		$gateways[] = 'WC_Banklink_Krediidipank_Gateway';
 		$gateways[] = 'WC_Banklink_Nordea_Gateway';
 		$gateways[] = 'WC_Banklink_Maksekeskus_Redirect_Gateway';
 
