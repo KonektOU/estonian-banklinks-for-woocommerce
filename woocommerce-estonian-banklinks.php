@@ -17,12 +17,17 @@ function wc_estonian_gateways() {
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/abstracts/class-wc-banklink-ipizza.php';
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/abstracts/class-wc-banklink-solo.php';
 
-	// Gateways
+	// IPizza
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-danske-gateway.php';
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-lhv-gateway.php';
-	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-nordea-gateway.php';
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-seb-gateway.php';
 	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-swedbank-gateway.php';
+
+	// Solo
+	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-nordea-gateway.php';
+
+	// Other
+	require_once untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/includes/class-wc-banklink-maksekeskus-redirect-gateway.php';
 
 	/**
 	 * Register gateways
@@ -36,6 +41,7 @@ function wc_estonian_gateways() {
 		$gateways[] = 'WC_Banklink_SEB_Gateway';
 		$gateways[] = 'WC_Banklink_Swedbank_Gateway';
 		$gateways[] = 'WC_Banklink_Nordea_Gateway';
+		$gateways[] = 'WC_Banklink_Maksekeskus_Redirect_Gateway';
 
 		return $gateways;
 	}
