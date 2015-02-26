@@ -15,6 +15,11 @@
 define( 'WC_ESTONIAN_GATEWAYS_MAIN_FILE', __FILE__ );
 
 /**
+ * Includes folder path
+ */
+define( 'WC_ESTONIAN_GATEWAYS_INCLUDES_PATH', untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes' );
+
+/**
  * Initialize plugin
  *
  * @return void
@@ -24,22 +29,22 @@ function wc_estonian_gateways() {
 	load_plugin_textdomain( 'wc-estonian-gateways', false, dirname( plugin_basename( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/languages' );
 
 	// Abstract classes
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/abstracts/class-wc-banklink.php';
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/abstracts/class-wc-banklink-ipizza.php';
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/abstracts/class-wc-banklink-solo.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-ipizza.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-solo.php';
 
 	// IPizza
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-danske-gateway.php';
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-lhv-gateway.php';
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-seb-gateway.php';
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-swedbank-gateway.php';
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-krediidipank-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-danske-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-lhv-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-seb-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-swedbank-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-krediidipank-gateway.php';
 
 	// Solo
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-nordea-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-nordea-gateway.php';
 
 	// Other
-	require_once untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes/class-wc-banklink-maksekeskus-redirect-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-maksekeskus-redirect-gateway.php';
 
 	/**
 	 * Register gateways
