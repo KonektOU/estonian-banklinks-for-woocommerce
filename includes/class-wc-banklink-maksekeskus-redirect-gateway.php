@@ -23,33 +23,16 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	 * @return void
 	 */
 	function init_form_fields() {
-		// Set fields
-		$this->form_fields = array(
-			'enabled'         => array(
-				'title'       => __( 'Enable Maksekeskus', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'checkbox',
-				'default'     => 'no',
-				'label'       => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
-			),
+
+		parent::init_form_fields();
+
+		// Add fields
+		$this->form_fields = array_merge( $this->form_fields, array(
 			'currency'        => array(
 				'title'       => __( 'Currency', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'select',
 				'options'     => get_woocommerce_currencies(),
 				'default'     => get_woocommerce_currency()
-			),
-			'title'           => array(
-				'title'       => __( 'Title', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'description' => __( 'This controls the title which user sees during checkout.', 'wc-gateway-estonia-banklink' ),
-				'default'     => $this->get_title(),
-				'desc_tip'    => TRUE
-			),
-			'description'     => array(
-				'title'       => __( 'Customer message', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'textarea',
-				'default'     => '',
-				'description' => __( 'This will be visible when user selects this payment gateway during checkout.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
 			),
 			'shop_id'         => array(
 				'title'       => __( 'Shop ID', 'wc-gateway-estonia-banklink' ),
@@ -88,7 +71,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 					'readonly' => 'readonly'
 				)
 			)
-		);
+		) );
 	}
 
 	/**

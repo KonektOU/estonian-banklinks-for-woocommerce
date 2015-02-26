@@ -25,6 +25,44 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Set settings fields
+	 *
+	 * @return void
+	 */
+	function init_form_fields() {
+		// Set fields
+		$this->form_fields = array(
+			'enabled'         => array(
+				'title'       => __( 'Enable banklink', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'checkbox',
+				'default'     => 'no',
+				'label'       => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
+			),
+			'title'           => array(
+				'title'       => __( 'Title', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'description' => __( 'This controls the title which user sees during checkout.', 'wc-gateway-estonia-banklink' ),
+				'default'     => $this->get_title(),
+				'desc_tip'    => TRUE
+			),
+			'description'     => array(
+				'title'       => __( 'Customer message', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'textarea',
+				'default'     => '',
+				'description' => __( 'This will be visible when user selects this payment gateway during checkout.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
+			),
+			'logo' => array(
+                'title'       => __( 'Logo', 'wc-gateway-estonia-banklink' ),
+                'type'        => 'text',
+                'default'     => $this->icon,
+                'description' => __( 'Enter full URL to set a custom logo. You could upload the image to your media library first.', 'msharks-wc-shipping' ),
+                'desc_tip'    => TRUE
+            ),
+		);
+	}
+
+	/**
 	 * Generate some kind of reference number
 	 *
 	 * @param  string $stamp Purchase ID
