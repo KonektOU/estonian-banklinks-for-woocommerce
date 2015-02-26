@@ -2,6 +2,7 @@
 abstract class WC_Banklink extends WC_Payment_Gateway {
 	function __construct() {
 
+		$this->icon        = plugins_url( 'assets/img/'. $this->id .'.png', WC_ESTONIAN_GATEWAYS_MAIN_FILE );
 		$this->has_fields  = FALSE;
 		$this->notify_url  = WC()->api_request_url( get_class( $this ) );
 
