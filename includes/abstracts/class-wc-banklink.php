@@ -53,12 +53,12 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 				'desc_tip'    => TRUE
 			),
 			'logo' => array(
-                'title'       => __( 'Logo', 'wc-gateway-estonia-banklink' ),
-                'type'        => 'text',
-                'default'     => $this->icon,
-                'description' => __( 'Enter full URL to set a custom logo. You could upload the image to your media library first.', 'msharks-wc-shipping' ),
-                'desc_tip'    => TRUE
-            ),
+				'title'       => __( 'Logo', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'default'     => $this->icon,
+				'description' => __( 'Enter full URL to set a custom logo. You could upload the image to your media library first.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
+			),
 		);
 	}
 
