@@ -45,6 +45,7 @@ function wc_estonian_gateways() {
 
 	// Other
 	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-maksekeskus-redirect-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-estcard-gateway.php';
 
 	/**
 	 * Register gateways
