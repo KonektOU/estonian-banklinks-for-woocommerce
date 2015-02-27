@@ -19,12 +19,6 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return void
 	 */
 	function init_form_fields() {
-
-		// prepare locale info
-		$locale = get_locale();
-		if ( strlen( $locale ) > 2 )
-			$locale = substr( $locale, 0, 2 );
-
 		parent::init_form_fields();
 
 		// Add fields
@@ -61,7 +55,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			'vk_lang'         => array(
 				'title'       => __( 'Default language', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'text',
-				'default'     => $locale,
+				'default'     => $this->get_default_language(),
 				'description' => __( 'Default UI language locale sent to the bank. Currently supported: et, en, ru. Defaults to et.', 'wc-gateway-estonia-banklink' ),
 				'desc_tip'    => TRUE
 			),

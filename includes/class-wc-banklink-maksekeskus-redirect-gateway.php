@@ -52,7 +52,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 				'type'        => 'text',
 				'description' => __( 'RFC-2616 format locale', 'wc-gateway-estonia-banklink' ),
 				'desc_tip'    => TRUE,
-				'default'     => 'et'
+				'default'     => $this->get_default_language()
 			),
 			'destination_url' => array(
 				'title'       => __( 'Destination URL', 'wc-gateway-estonia-banklink' ),

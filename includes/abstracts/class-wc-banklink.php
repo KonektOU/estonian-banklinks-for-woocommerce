@@ -120,4 +120,19 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	function is_available() {
 		return $this->get_option( 'enabled', 'no' ) != 'no';
 	}
+
+	/**
+	 * Get default language code
+	 *
+	 * @return string Language code
+	 */
+	function get_default_language() {
+		$locale = get_locale();
+
+		if ( strlen( $locale ) > 2 ) {
+			$locale = substr( $locale, 0, 2 );
+		}
+
+		return $locale;
+	}
 }
