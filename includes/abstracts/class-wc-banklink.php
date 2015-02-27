@@ -2,7 +2,7 @@
 abstract class WC_Banklink extends WC_Payment_Gateway {
 	function __construct() {
 
-		$this->icon        = plugins_url( 'assets/img/'. $this->id .'.png', WC_ESTONIAN_GATEWAYS_MAIN_FILE );
+		$this->icon        = $this->get_option( 'logo', plugins_url( 'assets/img/'. $this->id .'.png', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
 		$this->has_fields  = FALSE;
 		$this->notify_url  = WC()->api_request_url( get_class( $this ) );
 
@@ -22,6 +22,44 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_receipt_' . $this->id,                         array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_'. $this->id .'_check_response',               array( $this, 'validate_bank_response' ) );
+	}
+
+	/**
+	 * Set settings fields
+	 *
+	 * @return void
+	 */
+	function init_form_fields() {
+		// Set fields
+		$this->form_fields = array(
+			'enabled'         => array(
+				'title'       => __( 'Enable banklink', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'checkbox',
+				'default'     => 'no',
+				'label'       => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
+			),
+			'title'           => array(
+				'title'       => __( 'Title', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'description' => __( 'This controls the title which user sees during checkout.', 'wc-gateway-estonia-banklink' ),
+				'default'     => $this->get_title(),
+				'desc_tip'    => TRUE
+			),
+			'description'     => array(
+				'title'       => __( 'Customer message', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'textarea',
+				'default'     => '',
+				'description' => __( 'This will be visible when user selects this payment gateway during checkout.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
+			),
+			'logo' => array(
+				'title'       => __( 'Logo', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'text',
+				'default'     => $this->icon,
+				'description' => __( 'Enter full URL to set a custom logo. You could upload the image to your media library first.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
+			),
+		);
 	}
 
 	/**
@@ -81,5 +119,20 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 */
 	function is_available() {
 		return $this->get_option( 'enabled', 'no' ) != 'no';
+	}
+
+	/**
+	 * Get default language code
+	 *
+	 * @return string Language code
+	 */
+	function get_default_language() {
+		$locale = get_locale();
+
+		if ( strlen( $locale ) > 2 ) {
+			$locale = substr( $locale, 0, 2 );
+		}
+
+		return $locale;
 	}
 }
