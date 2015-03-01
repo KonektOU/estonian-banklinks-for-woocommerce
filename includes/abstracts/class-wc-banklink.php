@@ -59,6 +59,18 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 				'description' => __( 'Enter full URL to set a custom logo. You could upload the image to your media library first.', 'wc-gateway-estonia-banklink' ),
 				'desc_tip'    => TRUE
 			),
+			'countries' => array(
+				'title'       => __( 'Country availability', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'multiselect',
+				'class'       => 'wc-enhanced-select',
+				'options'     => array_merge(
+						array( 'all' => __( 'All countries', 'wc-gateway-estonia-banklink' ) ),
+						WC()->countries->get_countries()
+					),
+				'default'     => array( 'all' ),
+				'description' => __( 'Specify countries where this method should be available. Select only "all countries" to sell everywhere.', 'wc-gateway-estonia-banklink' ),
+				'desc_tip'    => TRUE
+			),
 		);
 	}
 
@@ -118,7 +130,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	function is_available() {
-		return $this->get_option( 'enabled', 'no' ) != 'no';
+		return $this->get_option( 'enabled', 'no' ) != 'no' && array_intersect( array( 'all', WC()->customer->get_country() ), $this->get_option( 'countries' ) );
 	}
 
 	/**
