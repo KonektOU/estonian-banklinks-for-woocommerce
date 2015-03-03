@@ -94,15 +94,15 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		// Set MAC fields
 		$macFields  = array(
 			'action'       => 'gaf',
-			'ver'          => 004,
-			'id'           => sprintf( '%-10s', $this->get_option( 'merchant_id' ) ),
-			'ecuno'        => sprintf( '%012s', date( 'Ym' ) . ( $this->ecuno_prefix + $order->id ) ), // min. 100000
-			'eamount'      => sprintf( '%012s', ( round( $order->get_total(), 2 ) * 100 ) ), // in cents
+			'ver'          => '004',
+			'id'           => $this->get_option( 'merchant_id' ),
+			'ecuno'        => date( 'Ym' ) . ( $this->ecuno_prefix + $order->id ),
+			'eamount'      => ( round( $order->get_total(), 2 ) * 100 ),
 			'cur'          => get_woocommerce_currency(),
 			'datetime'     => date( 'YmdHis' ),
 			'lang'         => $this->get_option( 'lang' ),
 			'charEncoding' => 'UTF-8',
-			'feedBackUrl'  => sprintf( '%-128s', $this->notify_url ),
+			'feedBackUrl'  => $this->notify_url,
 			'delivery'     => 'S',
 		);
 
@@ -122,7 +122,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 		// Add other data as hidden fields
 		foreach( $macFields as $name => $value ) {
-			$post .= '<input type="hidden" name="'. esc_attr( $name ) .'" value="'. esc_attr( $value ) .'">';
+			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'">';
 		}
 
 		// Show "Pay" button and end the form
@@ -143,18 +143,53 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 * @return string            MAC string
 	 */
 	function generate_mac_string( $fields ) {
-		$version = $fields['ver'];
+		$data = FALSE;
 
-		if( ! isset( $this->variable_order[ $version ] ) ) return FALSE;
-
-		// Data holder
-		$data    = '';
-
-		foreach( $this->variable_order[ $version ] as $var ) {
-			$data .= $fields[ $var ];
+		if( $fields['action'] == 'gaf' ) {
+			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'UTF-8' );
+		}
+		elseif( $fields['action'] == 'afb' ) {
+			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['receipt_no'],  6,   '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['respcode'],    3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
+					$this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['msgdata'],     40,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+					$this->mb_str_pad( $fields['actiontext'],  40,  ' ', STR_PAD_RIGHT, 'UTF-8' );
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Padding with multibyte support
+	 *
+	 * @param  string   $input      Input
+	 * @param  int      $pad_length Padding length
+	 * @param  string   $pad_string Paddable string
+	 * @param  constant $pad_type   Type
+	 * @param  string   $encoding   Encoding
+	 * @return string               Padded input
+	 */
+	function mb_str_pad( $input, $pad_length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = null ){
+		if ( ! $encoding ) {
+			$diff = strlen( $input ) - mb_strlen( $input );
+		}
+		else {
+			$diff = strlen( $input ) - mb_strlen( $input, $encoding );
+		}
+
+		return str_pad( $input, $pad_length + $diff, $pad_string, $pad_type );
 	}
 
 	/**
@@ -179,14 +214,32 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 	/**
 	 * Validate response from the bank
-	 * @param  array $request Response
+	 * @param  array $response Response
 	 * @return void
 	 */
 	function validate_bank_response( $response ) {
 		$validation = $this->validate_bank_payment( $response );
-		$order_id   = substr( $response['ecuno'], 0, strlen( $this->ecuno_prefix ) + 6 );
-		$order      = wc_get_order( $order );
+		$order_id   = substr( $response['ecuno'], 6 ) - $this->ecuno_prefix;
+		$order      = wc_get_order( $order_id );
 		$return_url = $this->get_return_url( $order );
+
+		// Check validation
+		if ( isset( $validation['status'] ) && $validation['status'] == 'success' ) {
+			// Payment completed
+			$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
+			$order->payment_complete();
+		}
+		else {
+			// Set status to on-hold
+			$order->update_status( 'on-hold', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+		}
+
+		// Redirect to order details
+		if( isset( $response['auto'] ) && $response['auto'] == 'N' ) {
+			wp_redirect( $return_url );
+		}
+
+		exit;
 	}
 
 	/**
@@ -198,56 +251,27 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	function validate_bank_payment( $response ) {
 		// Result failed by default
 		$result    = array(
-			'data'   => '',
-			'amount' => '',
 			'status' => 'failed'
 		);
 
-		if( ! is_array( $response ) || empty( $response ) || ! isset( $response['json'] ) ) {
+		if( ! is_array( $response ) || empty( $response ) || ! isset( $response['ecuno'] ) ) {
 			return $result;
 		}
 
-		// Get MAC fields from response
-		$macFields = $response['json'];
+		// Generate mac string and verify signature
+		$macString    = $this->generate_mac_string( $response );
+		$verification = openssl_verify( $macString, pack( 'H*', $response['mac'] ), $this->get_option( 'public_key' ), OPENSSL_ALGO_SHA1 );
 
-		$message   = @json_decode( $macFields );
+		$debug = new WC_Logger();
+		$debug->add( 'estcard', print_r( $macString, true ) );
+		$debug->add( 'estcard', print_r( $verification, true ) );
 
-		if( ! $message ) {
-			$message = @json_decode( stripslashes( $macFields ) );
-		}
-
-		if( ! $message ) {
-			$message = @json_decode( htmlspecialchars_decode( $macFields ) );
-		}
-
-		if( ! $message || ! isset( $message->signature ) || ! $message->signature ) {
-			return $result;
-		}
-
-		$response_signature = $message->signature;
-
-		// Compare signatures
-		if( $this->get_response_signature( $message ) == $response_signature ) {
-			switch( $message->status ) {
-				// Payment started, but not paid
-				case 'RECEIVED':
-					$result['status'] = 'received';
-					$result['data']   = $message->paymentId;
-					$result['amount'] = $message->amount;
-				break;
-
+		// Check signature verification
+		if( $verification === 1 ) {
+			switch( $response['respcode'] ) {
 				// Paid
-				case 'PAID':
+				case '000':
 					$result['status'] = 'success';
-					$result['data']   = $message->paymentId;
-					$result['amount'] = $message->amount;
-				break;
-
-				// Cancelled or paid
-				case 'CANCELLED':
-				case 'EXPIRED':
-					$result['status'] = 'cancelled';
-					$result['data']   = $message->paymentId;
 				break;
 
 				default:
