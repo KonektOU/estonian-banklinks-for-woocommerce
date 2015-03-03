@@ -17,7 +17,7 @@ define( 'WC_ESTONIAN_GATEWAYS_MAIN_FILE', __FILE__ );
 /**
  * Includes folder path
  */
-define( 'WC_ESTONIAN_GATEWAYS_INCLUDES_PATH', untrailingslashit( plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/includes' );
+define( 'WC_ESTONIAN_GATEWAYS_INCLUDES_PATH', plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) . 'includes' );
 
 /**
  * Initialize plugin
@@ -26,7 +26,7 @@ define( 'WC_ESTONIAN_GATEWAYS_INCLUDES_PATH', untrailingslashit( plugin_dir_path
  */
 function wc_estonian_gateways() {
 	// Load translations
-	load_plugin_textdomain( 'wc-estonian-gateways', false, dirname( plugin_basename( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/languages' );
+	load_plugin_textdomain( 'wc-gateway-estonia-banklink', false, dirname( plugin_basename( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/languages' );
 
 	// Abstract classes
 	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink.php';
