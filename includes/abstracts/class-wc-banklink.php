@@ -16,12 +16,12 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Payment listener/API hook
-		add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ),      array( $this, 'check_bank_response' ) );
+		add_action( 'woocommerce_api_' . strtolower( esc_attr( get_class( $this ) ) ),      array( $this, 'check_bank_response' ) );
 
 		// Actions
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_receipt_' . $this->id,                         array( $this, 'receipt_page' ) );
-		add_action( 'woocommerce_'. $this->id .'_check_response',               array( $this, 'validate_bank_response' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id,             array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_receipt_' . $this->id,                                     array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_'. $this->id .'_check_response',                           array( $this, 'validate_bank_response' ) );
 	}
 
 	/**
