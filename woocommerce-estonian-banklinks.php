@@ -61,6 +61,7 @@ function wc_estonian_gateways() {
 		$gateways[] = 'WC_Banklink_Krediidipank_Gateway';
 		$gateways[] = 'WC_Banklink_Nordea_Gateway';
 		$gateways[] = 'WC_Banklink_Maksekeskus_Redirect_Gateway';
+		$gateways[] = 'WC_Banklink_Estcard_Gateway';
 
 		return $gateways;
 	}
