@@ -1,9 +1,17 @@
 <?php
 class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
-	// Variables for request
+	/**
+	 * Variables for request
+	 *
+	 * @var array
+	 */
 	private $request_variable_order  = array( 'shopId', 'paymentId', 'amount' );
 
-	// Variables for response
+	/**
+	 * Variables for response
+	 *
+	 * @var array
+	 */
 	private $response_variable_order = array( 'paymentId', 'amount', 'status' );
 
 	/**
@@ -22,7 +30,6 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	 * @return void
 	 */
 	function init_form_fields() {
-
 		parent::init_form_fields();
 
 		// Add fields

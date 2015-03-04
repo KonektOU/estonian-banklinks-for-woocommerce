@@ -1,7 +1,15 @@
 <?php
 class WC_Banklink_Estcard_Gateway extends WC_Banklink {
+	/**
+	 * Prefix for transaction number
+	 *
+	 * @var integer
+	 */
 	private $ecuno_prefix   = 100000;
 
+	/**
+	 * WC_Banklink_Estcard_Gateway
+	 */
 	function __construct() {
 		$this->id           = 'estcard';
 		$this->method_title = __( 'Estcard', 'wc-gateway-estonia-banklink' );
@@ -56,6 +64,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 	/**
 	 * Create form for bank
+	 *
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
@@ -119,25 +128,25 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 		if( $fields['action'] == 'gaf' ) {
 			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'UTF-8' );
+			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'UTF-8' );
 		}
 		elseif( $fields['action'] == 'afb' ) {
 			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['receipt_no'],  6,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['respcode'],    3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-					$this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['msgdata'],     40,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-					$this->mb_str_pad( $fields['actiontext'],  40,  ' ', STR_PAD_RIGHT, 'UTF-8' );
+			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+			        $this->mb_str_pad( $fields['receipt_no'],  6,   '0', STR_PAD_LEFT,  'UTF-8' ) .
+			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
+			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['respcode'],    3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
+			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['msgdata'],     40,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
+			        $this->mb_str_pad( $fields['actiontext'],  40,  ' ', STR_PAD_RIGHT, 'UTF-8' );
 		}
 
 		return $data;
@@ -166,6 +175,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 	/**
 	 * Listen for the response from bank
+	 *
 	 * @return void
 	 */
 	function check_bank_response() {
@@ -186,6 +196,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 	/**
 	 * Validate response from the bank
+	 *
 	 * @param  array $response Response
 	 * @return void
 	 */
