@@ -34,18 +34,18 @@ function wc_estonian_gateways() {
 	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-solo.php';
 
 	// IPizza
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-danske-gateway.php';
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-lhv-gateway.php';
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-seb-gateway.php';
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-swedbank-gateway.php';
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-krediidipank-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-danske-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-lhv-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-seb-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-swedbank-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-krediidipank-gateway.php';
 
 	// Solo
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-nordea-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-nordea-gateway.php';
 
 	// Other
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-maksekeskus-redirect-gateway.php';
-	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-banklink-estcard-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php';
+	require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-estcard-gateway.php';
 
 	/**
 	 * Register gateways
