@@ -50,6 +50,7 @@ class WooCommerce_Estonian_Gateways {
 		if( ! $this->is_payment_gateway_class_available() ) return FALSE;
 
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateways' ) );
+		add_filter( 'woocommerce_integrations',     array( $this, 'register_integrations' ) );
 
 		// Load functionality, translations
 		$this->includes();
@@ -80,6 +81,12 @@ class WooCommerce_Estonian_Gateways {
 		// Other
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-estcard-gateway.php';
+
+		// Integrations
+		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-integration-maksekeskus-billing-api.php';
+
+		// Libraries
+		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/libraries/class-maksekeskus-api.php';
 	}
 
 	/**
@@ -126,6 +133,11 @@ class WooCommerce_Estonian_Gateways {
 		return $gateways;
 	}
 
+	function register_integrations( $integrations ) {
+		$integrations[] = 'WC_Integration_Maksekeskus_Billing_API';
+
+		return $integrations;
+	}
 
 	/**
 	 * Fetch instance of this plugin
