@@ -1,10 +1,11 @@
 <?php
 abstract class WC_Banklink_Solo extends WC_Banklink {
-
+	/**
+	 * WC_Banklink_Solo
+	 */
 	function __construct() {
 		parent::__construct();
 	}
-
 
 	/**
 	 * Set settings fields
@@ -12,7 +13,6 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	 * @return void
 	 */
 	function init_form_fields() {
-
 		parent::init_form_fields();
 
 		// Add fields
@@ -71,9 +71,9 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		) );
 	}
 
-
 	/**
 	 * Create form for bank
+	 *
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
@@ -124,6 +124,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 	/**
 	 * Listen for the response from bank
+	 *
 	 * @return void
 	 */
 	function check_bank_response() {
@@ -135,6 +136,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 	/**
 	 * Validate response from the bank
+	 *
 	 * @param  array $request Response
 	 * @return void
 	 */
@@ -161,7 +163,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 	/**
 	 * Generates MAC string as needed according to the service number
-	 * 
+	 *
 	 * @param  array  $macFields MAC fields
 	 * @return string            MAC string
 	 */

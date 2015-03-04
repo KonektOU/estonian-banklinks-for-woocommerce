@@ -1,7 +1,10 @@
 <?php
 abstract class WC_Banklink extends WC_Payment_Gateway {
+	/**
+	 * WC_Banklink
+	 */
 	function __construct() {
-
+		// Get icon and set notification URL
 		$this->icon        = $this->get_option( 'logo', plugins_url( 'assets/img/'. $this->id .'.png', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
 		$this->has_fields  = FALSE;
 		$this->notify_url  = WC()->api_request_url( get_class( $this ) );
@@ -116,6 +119,12 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 		);
 	}
 
+	/**
+	 * Adds form to the receipt page
+	 *
+	 * @param  integer $order_id Order ID
+	 * @return void
+	 */
 	function receipt_page( $order_id ) {
 		// Say thank you :)
 		echo apply_filters( 'the_content', sprintf( __( 'Thank you for your order, please click the button below to pay with %s in case automatic redirection does not work.', 'wc-gateway-estonia-banklink' ), $this->get_title() ) );

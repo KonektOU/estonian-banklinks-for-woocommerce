@@ -1,5 +1,10 @@
 <?php
 abstract class WC_Banklink_Ipizza extends WC_Banklink {
+	/**
+	 * Variables for different iPizza requests
+	 *
+	 * @var array
+	 */
 	private $variable_order = array(
 		1011 => array( 'VK_SERVICE', 'VK_VERSION', 'VK_SND_ID', 'VK_STAMP', 'VK_AMOUNT', 'VK_CURR', 'VK_ACC', 'VK_NAME', 'VK_REF', 'VK_MSG', 'VK_RETURN', 'VK_CANCEL', 'VK_DATETIME' ),
 		1012 => array( 'VK_SERVICE', 'VK_VERSION', 'VK_SND_ID', 'VK_STAMP', 'VK_AMOUNT', 'VK_CURR', 'VK_REF', 'VK_MSG', 'VK_RETURN', 'VK_CANCEL', 'VK_DATETIME' ),
@@ -7,8 +12,16 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		1911 => array( 'VK_SERVICE', 'VK_VERSION', 'VK_SND_ID', 'VK_REC_ID', 'VK_STAMP', 'VK_REF', 'VK_MSG' )
 	);
 
+	/**
+	 * Languagecodes
+	 *
+	 * @var array
+	 */
 	private $lang_codes = array( 'et' => 'EST', 'en' => 'ENG', 'ru' => 'RUS' );
 
+	/**
+	 * WC_Banklink_Ipizza
+	 */
 	function __construct() {
 		parent::__construct();
 	}
@@ -87,6 +100,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 
 	/**
 	 * Listen for the response from bank
+	 *
 	 * @return void
 	 */
 	function check_bank_response() {
@@ -184,6 +198,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 
 	/**
 	 * Create form for bank
+	 *
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
