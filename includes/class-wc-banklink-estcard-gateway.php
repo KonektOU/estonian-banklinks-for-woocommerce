@@ -245,10 +245,6 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$macString    = $this->generate_mac_string( $response );
 		$verification = openssl_verify( $macString, pack( 'H*', $response['mac'] ), $this->get_option( 'public_key' ), OPENSSL_ALGO_SHA1 );
 
-		$debug = new WC_Logger();
-		$debug->add( 'estcard', print_r( $macString, true ) );
-		$debug->add( 'estcard', print_r( $verification, true ) );
-
 		// Check signature verification
 		if( $verification === 1 ) {
 			switch( $response['respcode'] ) {
