@@ -3,8 +3,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	private $ecuno_prefix   = 100000;
 
 	function __construct() {
-		$this->id    = 'estcard';
-		$this->title = __( 'Estcard', 'wc-gateway-estonia-banklink' );
+		$this->id           = 'estcard';
+		$this->method_title = __( 'Estcard', 'wc-gateway-estonia-banklink' );
 
 		parent::__construct();
 	}

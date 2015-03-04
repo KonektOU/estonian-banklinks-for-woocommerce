@@ -11,8 +11,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	 */
 	function __construct() {
 		$this->id           = 'maksekeskus_redirect';
-		$this->title        = __( 'Maksekeskus', 'wc-gateway-estonia-banklink' );
-		$this->method_title = $this->get_title();
+		$this->method_title = __( 'Maksekeskus', 'wc-gateway-estonia-banklink' );
 
 		parent::__construct();
 	}
