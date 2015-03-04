@@ -156,4 +156,17 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 
 		return $locale;
 	}
+
+	/**
+	 * Easier debugging
+	 *
+	 * @param  mixed $data Data to be saved
+	 * @return void
+	 */
+	function debug( $data ) {
+		if( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
+			$logger = new WC_Logger();
+			$logger->add( $this->id, is_array( $data ) || is_object( $data ) ? print_r( $data, TRUE ) : $data );
+		}
+	}
 }
