@@ -1,0 +1,268 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Estonian Banklinks\n"
+"POT-Creation-Date: 2015-03-05 21:17+0200\n"
+"PO-Revision-Date: 2015-03-05 21:17+0200\n"
+"Last-Translator: \n"
+"Language-Team: Konekt OÜ <info@konekt.ee>\n"
+"Language: et\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.4\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
+"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
+"X-Poedit-Basepath: ../\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:40
+#: includes/abstracts/class-wc-banklink-solo.php:21
+msgid "Request URL"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:47
+#: includes/abstracts/class-wc-banklink-solo.php:28
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:36
+msgid "Account ID"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:54
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:41
+msgid "Your Private Key"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:59
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:46
+msgid "Private Key Password"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:64
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:51
+msgid "Bank`s Public Key"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:69
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:56
+msgid "Default language"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:72
+msgid ""
+"Default UI language locale sent to the bank. Currently supported: et, en, "
+"ru. Defaults to et."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:144
+#: includes/abstracts/class-wc-banklink-solo.php:152
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:212
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:207
+msgid "Payment completed."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:149
+#: includes/abstracts/class-wc-banklink-solo.php:157
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:217
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:222
+msgid "Payment not made or is not verified."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:221
+#: includes/abstracts/class-wc-banklink-solo.php:94
+#, php-format
+msgid "Order nr. %s payment"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-ipizza.php:262
+#: includes/abstracts/class-wc-banklink-solo.php:115
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:110
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:118
+msgid "Pay"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:35
+msgid "Account number"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:42
+msgid "MAC Key"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:47
+msgid "MAC Key version"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:52
+msgid "0001 (md5)"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:53
+msgid "0002 (sha1)"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:58
+msgid "Preferred language"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:64
+msgid "Finnish"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:65
+msgid "English"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:66
+msgid "Estonian"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:67
+msgid "Latvian"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink-solo.php:68
+msgid "Lithuanian"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:39
+msgid "Enable banklink"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:42
+msgid "Enable this payment gateway"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:45
+msgid "Title"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:47
+msgid "This controls the title which user sees during checkout."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:52
+msgid "Customer message"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:55
+msgid ""
+"This will be visible when user selects this payment gateway during checkout."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:59
+msgid "Logo"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:62
+msgid ""
+"Enter full URL to set a custom logo. You could upload the image to your "
+"media library first."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:66
+msgid "Country availability"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:70
+msgid "All countries"
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:74
+msgid ""
+"Specify countries where this method should be available. Select only \"all "
+"countries\" to sell everywhere."
+msgstr ""
+
+#: includes/abstracts/class-wc-banklink.php:130
+#, php-format
+msgid ""
+"Thank you for your order, please click the button below to pay with %s in "
+"case automatic redirection does not work."
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-danske-gateway.php:8
+msgid "Danske"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:15
+msgid "Estcard"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:31
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:64
+msgid "Destination URL"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:59
+msgid ""
+"Default UI language locale sent to the bank. Currently supported: et, en, "
+"fi, de. Defaults to et."
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-krediidipank-gateway.php:8
+msgid "Krediidipank"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-lhv-gateway.php:8
+msgid "LHV"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:22
+msgid "Maksekeskus"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:38
+msgid "Currency"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:44
+msgid "Shop ID"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:47
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:53
+msgid "This will be provided by Maksekeskus"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:51
+msgid "API secret"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:57
+msgid "Preferred locale"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:59
+msgid "RFC-2616 format locale"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:67
+msgid "URL, where customer is redirected to start the payment."
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:71
+msgid "Return URL"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:74
+msgid "URL, where customer is redirected after the payment."
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:214
+msgid "Payment cancelled."
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-nordea-gateway.php:8
+msgid "Nordea"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-seb-gateway.php:8
+msgid "SEB"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-swedbank-gateway.php:8
+msgid "Swedbank"
+msgstr ""
