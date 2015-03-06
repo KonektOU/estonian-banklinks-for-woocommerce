@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce Estonian Banklinks\n"
 "POT-Creation-Date: 2015-03-05 21:17+0200\n"
-"PO-Revision-Date: 2015-03-05 21:30+0200\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2015-03-06 09:39+0200\n"
+"Last-Translator: Tanel Jüris <tanel.juris@marketingsharks.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "Panga avalik võti"
 #: includes/abstracts/class-wc-banklink-ipizza.php:69
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:56
 msgid "Default language"
-msgstr "Vaikimisi võti"
+msgstr "Vaikimisi keel"
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:72
 msgid ""
