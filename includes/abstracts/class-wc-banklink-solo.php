@@ -112,7 +112,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		}
 
 		// Show "Pay" button and end the form
-		$form	.= '<input type="submit" name="send_banlink" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
+		$form	.= '<input type="submit" name="send_banlink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'">';
 		$form	.= "</form>";
 
 		// Add inline JS
