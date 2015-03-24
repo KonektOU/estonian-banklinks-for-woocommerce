@@ -172,7 +172,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		$variableOrder = array( 'SOLOPMT_VERSION', 'SOLOPMT_STAMP', 'SOLOPMT_RCV_ID', 'SOLOPMT_AMOUNT', 'SOLOPMT_REF', 'SOLOPMT_DATE', 'SOLOPMT_CUR' );
 
 		// Data holder
-		$data		= '';
+		$data		   = '';
 
 		// Append data as needed
 		foreach ( $variableOrder as $key ) {
@@ -205,7 +205,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	 */
 	function validate_banklink_payment( $params, $pubkey ) {
 		// Set some variables
-		$resul          = array( 'orderNr' => $params['SOLOPMT_STAMP'], 'payment' => 'failed' );
+		$result         = array( 'orderNr' => $params['SOLOPMT_RETURN_STAMP'], 'payment' => 'failed' );
 		$variableOrder	= array( 'SOLOPMT_RETURN_VERSION', 'SOLOPMT_RETURN_STAMP', 'SOLOPMT_RETURN_REF', 'SOLOPMT_RETURN_PAID' );
 
 		$data           = '';
