@@ -153,7 +153,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 			$order->payment_complete();
 		}
 		else {
-			// Set status to on-hold
+			// Set status to failed
 			$order->update_status( 'failed', $this->title . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
 		}
 
