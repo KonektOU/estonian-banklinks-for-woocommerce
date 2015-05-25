@@ -146,7 +146,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 		else {
 			// Set status to on-hold
-			$order->update_status( 'on-hold', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+			$order->update_status( 'failed', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
 		}
 
 		// Redirect to order details
