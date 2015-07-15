@@ -104,7 +104,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		$macFields['SOLOPMT_MAC']	= $this->generate_mac_string( $macFields );
 
 		// Start form
-		$form	= '<form action="'. $this->get_option( 'solopmt_dest' ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
+		$form	= '<form action="'. esc_attr( $this->get_option( 'solopmt_dest' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add fields to form inputs
 		foreach ( $macFields as $name => $value ) {

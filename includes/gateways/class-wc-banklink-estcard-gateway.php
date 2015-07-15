@@ -99,7 +99,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$macFields['mac'] = bin2hex( $signature );
 
 		// Start form
-		$post = '<form action="'. htmlspecialchars( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
+		$post = '<form action="'. esc_attr( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add other data as hidden fields
 		foreach( $macFields as $name => $value ) {

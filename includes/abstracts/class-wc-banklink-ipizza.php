@@ -248,7 +248,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$macFields['VK_LANG'] = isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : $this->lang_codes[0];
 
 		// Start form
-		$post = '<form action="'. $this->get_option( 'vk_dest' ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
+		$post = '<form action="'. esc_attr( $this->get_option( 'vk_dest' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add fields to form inputs
 		foreach ( $macFields as $name => $value ) {
