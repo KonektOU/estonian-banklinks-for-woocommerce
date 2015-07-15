@@ -81,10 +81,10 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'eamount'      => ( round( $order->get_total(), 2 ) * 100 ),
 			'cur'          => get_woocommerce_currency(),
 			'datetime'     => date( 'YmdHis' ),
-			'lang'         => $this->get_option( 'lang' ),
-			'charEncoding' => 'UTF-8',
 			'feedBackUrl'  => $this->notify_url,
 			'delivery'     => 'S',
+			'lang'         => $this->get_option( 'lang' ),
+			'charEncoding' => 'utf-8'
 		);
 
 		$key        = openssl_pkey_get_private( $this->get_option( 'private_key' ), $this->get_option( 'private_key_pass' ) );
