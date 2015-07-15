@@ -118,6 +118,9 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		$post .= '<input type="submit" name="send_banklink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
 		$post .= "</form>";
 
+		// Debug output
+		$this->debug( $macFields );
+
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
 
@@ -173,6 +176,9 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		@ob_clean();
 
 		$response = ! empty( $_REQUEST ) ? stripslashes_deep( $_REQUEST ) : false;
+
+		// Debug response data
+		$this->debug( $response );
 
 		if( $response && isset( $response['json'] ) ) {
 			header( 'HTTP/1.1 200 OK' );

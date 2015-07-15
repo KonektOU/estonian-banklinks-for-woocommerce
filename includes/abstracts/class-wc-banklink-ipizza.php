@@ -108,6 +108,9 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 
 		$response = ! empty( $_REQUEST ) ? $_REQUEST : false;
 
+		// Debug response data
+		$this->debug( $_REQUEST );
+
 		if( $response && isset( $response['VK_STAMP'] ) ) {
 			header( 'HTTP/1.1 200 OK' );
 
@@ -263,6 +266,9 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Show "Pay" button and end the form
 		$post .= '<input type="submit" name="send_banklink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'">';
 		$post .= "</form>";
+
+		// Debug output
+		$this->debug( $macFields );
 
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );

@@ -115,6 +115,9 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		$form	.= '<input type="submit" name="send_banlink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'">';
 		$form	.= "</form>";
 
+		// Debug output
+		$this->debug( $macFields );
+
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
 
@@ -128,9 +131,12 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	 * @return void
 	 */
 	function check_bank_response() {
+		// Debug response data
+		$this->debug( $_REQUEST );
+
 		if( !empty( $_REQUEST ) && isset( $_REQUEST['SOLOPMT_RETURN_MAC'] ) ) {
 			// Validate response
-			do_action( 'woocommerce_'. $this->id .'_check_response', $_GET );
+			do_action( 'woocommerce_'. $this->id .'_check_response', $_REQUEST );
 		}
 	}
 
