@@ -240,10 +240,12 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// language support: informs bank of preferred UI language
 		$lang = $this->get_option( 'vk_lang' );
 
-		if ( defined( 'ICL_LANGUAGE_CODE' ) )
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$lang = ICL_LANGUAGE_CODE; // WPML
-		elseif ( function_exists( 'qtrans_getLanguage' ) )
+		}
+		elseif ( function_exists( 'qtrans_getLanguage' ) ) {
 			$lang = qtrans_getLanguage(); // qtranslate
+		}
 
 		$macFields['VK_LANG'] = isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : $this->lang_codes[0];
 
