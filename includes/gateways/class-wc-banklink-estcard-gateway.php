@@ -127,26 +127,26 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$data = FALSE;
 
 		if( $fields['action'] == 'gaf' ) {
-			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'UTF-8' );
+			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'utf-8' );
 		}
 		elseif( $fields['action'] == 'afb' ) {
-			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['receipt_no'],  6,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['respcode'],    3,   '0', STR_PAD_LEFT,  'UTF-8' ) .
-			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['msgdata'],     40,  ' ', STR_PAD_RIGHT, 'UTF-8' ) .
-			        $this->mb_str_pad( $fields['actiontext'],  40,  ' ', STR_PAD_RIGHT, 'UTF-8' );
+			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['receipt_no'],  6,   '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['respcode'],    3,   '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['msgdata'],     40,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['actiontext'],  40,  ' ', STR_PAD_RIGHT, 'utf-8' );
 		}
 
 		return $data;
