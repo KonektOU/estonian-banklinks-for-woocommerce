@@ -103,7 +103,8 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		// Mac
 		$macFields = array(
 			'json'   => json_encode( $request ),
-			'locale' => $this->get_option( 'locale' )
+			'locale' => $this->get_option( 'locale' ),
+			'country' => $order->billing_country,
 		);
 
 		// Start form
