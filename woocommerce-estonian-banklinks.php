@@ -6,6 +6,7 @@
 	Version: 1.0
 	Author: Konekt OÜ
 	Author URI: http://www.konekt.ee
+	License: GPLv2 or later
 */
 
 // Security check
