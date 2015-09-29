@@ -72,6 +72,20 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		// Get the order
 		$order      = wc_get_order( $order_id );
 
+		// get language code accepted by Nets Estonia
+		$lang = $this->get_option( 'lang' );
+
+		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
+			$lang = ICL_LANGUAGE_CODE; // WPML
+		}
+		elseif ( function_exists( 'qtrans_getLanguage' ) ) {
+			$lang = qtrans_getLanguage(); // qtranslate
+		}
+
+		$accepted_lang_codes = array( 'et', 'en', 'fi', 'de' );
+
+		$lang_code = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
+
 		// Set MAC fields
 		$macFields  = array(
 			'action'       => 'gaf',
@@ -83,7 +97,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'datetime'     => date( 'YmdHis' ),
 			'feedBackUrl'  => $this->notify_url,
 			'delivery'     => 'S',
-			'lang'         => $this->get_option( 'lang' ),
+			'lang'         => $lang_code,
 			'charEncoding' => 'utf-8'
 		);
 
