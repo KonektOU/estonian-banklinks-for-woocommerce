@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Estonian Banklinks\n"
-"POT-Creation-Date: 2015-03-05 21:17+0200\n"
-"PO-Revision-Date: 2015-03-05 21:17+0200\n"
-"Last-Translator: \n"
+"Project-Id-Version: Estonian Banklinks for WooCommerce\n"
+"POT-Creation-Date: 2015-09-30 21:23+0200\n"
+"PO-Revision-Date: 2015-09-30 21:23+0200\n"
+"Last-Translator: Risto Niinemets <risto@konekt.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.4\n"
+"X-Generator: Poedit 1.7.1\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
 "esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
@@ -56,30 +56,30 @@ msgid ""
 "ru. Defaults to et."
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:144
-#: includes/abstracts/class-wc-banklink-solo.php:152
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:212
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:207
+#: includes/abstracts/class-wc-banklink-ipizza.php:147
+#: includes/abstracts/class-wc-banklink-solo.php:158
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:232
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:214
 msgid "Payment completed."
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:149
-#: includes/abstracts/class-wc-banklink-solo.php:157
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:217
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:222
+#: includes/abstracts/class-wc-banklink-ipizza.php:152
+#: includes/abstracts/class-wc-banklink-solo.php:163
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:237
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:229
 msgid "Payment not made or is not verified."
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:221
+#: includes/abstracts/class-wc-banklink-ipizza.php:224
 #: includes/abstracts/class-wc-banklink-solo.php:94
 #, php-format
 msgid "Order nr. %s payment"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:262
+#: includes/abstracts/class-wc-banklink-ipizza.php:267
 #: includes/abstracts/class-wc-banklink-solo.php:115
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:110
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:118
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:124
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:119
 msgid "Pay"
 msgstr ""
 
@@ -251,7 +251,7 @@ msgstr ""
 msgid "URL, where customer is redirected after the payment."
 msgstr ""
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:214
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:221
 msgid "Payment cancelled."
 msgstr ""
 
