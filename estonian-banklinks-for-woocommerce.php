@@ -1,7 +1,7 @@
 <?php
 /*
-	Plugin Name: WooCommerce Estonian Banklinks
-	Plugin URI: https://github.com/KonektOU/woocommerce-estonian-banklinks
+	Plugin Name: Estonian Banklinks for WooCommerce
+	Plugin URI: https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 	Description: Extends WooCommerce with most commonly used Estonian banklinks.
 	Version: 1.0
 	Author: Konekt OÜ
@@ -23,11 +23,11 @@ define( 'WC_ESTONIAN_GATEWAYS_MAIN_FILE', __FILE__ );
 define( 'WC_ESTONIAN_GATEWAYS_INCLUDES_PATH', plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) . 'includes' );
 
 /**
- * @class    WooCommerce_Estonian_Gateways
+ * @class    Estonian_Gateways_For_WooCommerce
  * @category Plugin
- * @package  WooCommerce_Estonian_Gateways
+ * @package  Estonian_Gateways_For_WooCommerce
  */
-class WooCommerce_Estonian_Gateways {
+class Estonian_Gateways_For_WooCommerce {
 	/**
 	 * Instance
 	 *
@@ -131,7 +131,7 @@ class WooCommerce_Estonian_Gateways {
 	/**
 	 * Fetch instance of this plugin
 	 *
-	 * @return WooCommerce_Estonian_Gateways
+	 * @return Estonian_Gateways_For_WooCommerce
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) )
@@ -143,11 +143,11 @@ class WooCommerce_Estonian_Gateways {
 
 
 /**
- * Returns the main instance of WooCommerce_Estonian_Gateways to prevent the need to use globals.
- * @return WooCommerce_Estonian_Gateways
+ * Returns the main instance of Estonian_Gateways_For_WooCommerce to prevent the need to use globals.
+ * @return Estonian_Gateways_For_WooCommerce
  */
 function WC_Estonian_Gateways() {
-	return WooCommerce_Estonian_Gateways::instance();
+	return Estonian_Gateways_For_WooCommerce::instance();
 }
 
 // Global for backwards compatibility.

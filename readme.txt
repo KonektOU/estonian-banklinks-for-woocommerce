@@ -1,4 +1,4 @@
-=== WooCommerce Estonian Banklinks ===
+=== Estonian Banklinks for WooCommerce ===
 Contributors: RistoNiinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
@@ -19,12 +19,12 @@ This plugin consists of several Estonian banklinks:
 *   Estcard (E-Commerce Payment Gateway)
 
 Code is maintained and developed at Github. Contributions and discussions are very welcome:
-https://github.com/KonektOU/woocommerce-estonian-banklinks
+https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 
 
 == Installation ==
 
-1. Upload `woocommerce-estonian-banklinks` folder to the `/wp-content/plugins/` directory
+1. Upload `estonian-banklinks-for-woocommerce` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to WooCommerce - settings
 4. Payment gateways will be available to be configured in "Checkout" settings
