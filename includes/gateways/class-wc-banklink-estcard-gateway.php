@@ -310,7 +310,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		while ( $tries < 500 ) {
 
 			// new random - does NOT need to be cryptographically secure
-			$rand = (string)rand( 100000, 899999 );
+			$rand = rand( 100000, 899999 );
 			$ecuno = date( 'Ym' ) . ( $rand + $order_id );
 
 			$post_id = $this->get_order_id_by_ecuno_value( $ecuno );
