@@ -1,11 +1,5 @@
 <?php
 class WC_Banklink_Estcard_Gateway extends WC_Banklink {
-	/**
-	 * Prefix for transaction number
-	 *
-	 * @var integer
-	 */
-	private $ecuno_prefix   = 100000;
 
 	/**
 	 * WC_Banklink_Estcard_Gateway
@@ -91,7 +85,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'action'       => 'gaf',
 			'ver'          => '004',
 			'id'           => $this->get_option( 'merchant_id' ),
-			'ecuno'        => date( 'Ym' ) . ( $this->ecuno_prefix + $order->id ),
+			'ecuno'        => $this->generate_unique_ecuno( $order->id ),
 			'eamount'      => ( round( $order->get_total(), 2 ) * 100 ),
 			'cur'          => get_woocommerce_currency(),
 			'datetime'     => date( 'YmdHis' ),
@@ -222,23 +216,25 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 */
 	function validate_bank_response( $response ) {
 		$validation = $this->validate_bank_payment( $response );
-		$order_id   = substr( $response['ecuno'], 6 ) - $this->ecuno_prefix;
+		$order_id   = $this->get_order_id_by_ecuno_value( $response['ecuno'] );
 		$order      = wc_get_order( $order_id );
 		$return_url = $this->get_return_url( $order );
 
-		// Check validation
-		if ( isset( $validation['status'] ) && $validation['status'] == 'success' ) {
-			// Payment completed
-			$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
-			$order->payment_complete();
-		}
-		else {
-			// Set status to failed
-			$order->update_status( 'failed', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+		if ( $order ) {
+			// Check validation
+			if ( isset( $validation['status'] ) && $validation['status'] == 'success' ) {
+				// Payment completed
+				$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
+				$order->payment_complete();
+			}
+			else {
+				// Set status to failed
+				$order->update_status( 'failed', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+			}
 		}
 
 		// Redirect to order details
-		if( isset( $response['auto'] ) && $response['auto'] == 'N' ) {
+		if ( isset( $response['auto'] ) && $response['auto'] == 'N' ) {
 			wp_redirect( $return_url );
 		}
 
@@ -280,5 +276,55 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Search for existing postmeta value for the key "_ecuno", which has to be unique
+	 *
+	 * @param string $ecuno Unique transaction identifier
+	 * @return int|bool WP_Post ID or false when none found
+	 */
+	function get_order_id_by_ecuno_value( $ecuno ) {
+		global $wpdb;
+
+		return $wpdb->get_var( $wpdb->prepare( "
+			SELECT postmeta.post_id
+			FROM $wpdb->postmeta AS postmeta
+			WHERE postmeta.meta_key = '_ecuno' AND postmeta.meta_value = '%s'
+			LIMIT 1
+		", $ecuno ) );
+	}
+
+	/**
+	 * Generate a new ecuno for order and store it in database. There can be only one per order.
+	 *
+	 * @param int $order_id WC_Order ID
+	 * @return string|bool Transaction identifier or false on failure
+	 */
+	function generate_unique_ecuno( $order_id ) {
+
+		$tries = 0;
+		$ecuno = '';
+
+		// we don't expect to exceed 1, but need a limit
+		while ( $tries < 500 ) {
+
+			// new random - does NOT need to be cryptographically secure
+			$rand = (string)rand( 100000, 899999 );
+			$ecuno = date( 'Ym' ) . ( $rand + $order_id );
+
+			$post_id = $this->get_order_id_by_ecuno_value( $ecuno );
+
+			if ( ! $post_id ) {
+				update_post_meta( $order_id, '_ecuno', $ecuno );
+				return $ecuno;
+			}
+
+			$tries++;
+		}
+
+		error_log( 'Error: could not generate a unique ecuno for Estcard payment transaction' );
+
+		return false;
 	}
 }
