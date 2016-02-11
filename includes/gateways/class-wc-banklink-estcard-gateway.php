@@ -304,19 +304,19 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	function generate_unique_ecuno( $order_id ) {
 
 		$tries = 0;
-		$ecuno = '';
+		$date = date( 'Ym' );
 
 		// we don't expect to exceed 1, but need a limit
-		while ( $tries < 500 ) {
+		while ( $tries < 50 ) {
 
 			// new random - does NOT need to be cryptographically secure
-			$rand = rand( 100000, 899999 );
-			$ecuno = date( 'Ym' ) . ( $rand + $order_id );
+			$rand = rand( 100000, 999999 );
+			$ecuno = $date . $rand;
 
 			$post_id = $this->get_order_id_by_ecuno_value( $ecuno );
 
 			if ( ! $post_id ) {
-				update_post_meta( $order_id, '_ecuno', $ecuno );
+				add_post_meta( $order_id, '_ecuno', $ecuno );
 				return $ecuno;
 			}
 
