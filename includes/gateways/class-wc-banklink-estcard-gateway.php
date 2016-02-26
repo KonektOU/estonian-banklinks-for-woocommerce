@@ -64,10 +64,10 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 */
 	function generate_submit_form( $order_id ) {
 		// Get the order
-		$order      = wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
 
-		// get language code accepted by Nets Estonia
-		$lang = $this->get_option( 'lang' );
+		// Get language code accepted by Nets Estonia
+		$lang  = $this->get_option( 'lang' );
 
 		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$lang = ICL_LANGUAGE_CODE; // WPML
@@ -76,9 +76,11 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			$lang = qtrans_getLanguage(); // qtranslate
 		}
 
+		// All accepted language codes
 		$accepted_lang_codes = array( 'et', 'en', 'fi', 'de' );
 
-		$lang_code = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
+		// Current language code
+		$lang_code           = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
 
 		// Set MAC fields
 		$macFields  = array(
@@ -110,7 +112,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$post = '<form action="'. esc_attr( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add other data as hidden fields
-		foreach( $macFields as $name => $value ) {
+		foreach ( $macFields as $name => $value ) {
 			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'">';
 		}
 
@@ -137,7 +139,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	function generate_mac_string( $fields ) {
 		$data = FALSE;
 
-		if( $fields['action'] == 'gaf' ) {
+		if ( $fields['action'] == 'gaf' ) {
 			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
 			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
 			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'utf-8' ) .
@@ -147,7 +149,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			        $this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'utf-8' ) .
 			        $this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'utf-8' );
 		}
-		elseif( $fields['action'] == 'afb' ) {
+		elseif ( $fields['action'] == 'afb' ) {
 			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
 			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
 			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'utf-8' ) .
@@ -197,7 +199,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		// Debug response data
 		$this->debug( $response );
 
-		if( $response && isset( $response['ecuno'] ) ) {
+		if ( $response && isset( $response['ecuno'] ) ) {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
@@ -253,7 +255,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'status' => 'failed'
 		);
 
-		if( ! is_array( $response ) || empty( $response ) || ! isset( $response['ecuno'] ) ) {
+		if ( ! is_array( $response ) || empty( $response ) || ! isset( $response['ecuno'] ) ) {
 			return $result;
 		}
 
@@ -262,7 +264,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$verification = openssl_verify( $macString, pack( 'H*', $response['mac'] ), $this->get_option( 'public_key' ), OPENSSL_ALGO_SHA1 );
 
 		// Check signature verification
-		if( $verification === 1 ) {
+		if ( $verification === 1 ) {
 			switch( $response['respcode'] ) {
 				// Paid
 				case '000':
@@ -302,21 +304,20 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 * @return string|bool Transaction identifier or false on failure
 	 */
 	function generate_unique_ecuno( $order_id ) {
-
 		$tries = 0;
-		$date = date( 'Ym' );
+		$date  = date( 'Ym' );
 
 		// we don't expect to exceed 1, but need a limit
 		while ( $tries < 50 ) {
-
 			// new random - does NOT need to be cryptographically secure
-			$rand = rand( 100000, 999999 );
-			$ecuno = $date . $rand;
+			$rand    = rand( 100000, 999999 );
+			$ecuno   = $date . $rand;
 
 			$post_id = $this->get_order_id_by_ecuno_value( $ecuno );
 
 			if ( ! $post_id ) {
 				add_post_meta( $order_id, '_ecuno', $ecuno );
+
 				return $ecuno;
 			}
 

@@ -10,7 +10,7 @@
 */
 
 // Security check
-if( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Main file constant
@@ -48,7 +48,7 @@ class Estonian_Gateways_For_WooCommerce {
 	 */
 	public function plugins_loaded() {
 		// Check if payment gateways are available
-		if( ! $this->is_payment_gateway_class_available() ) return FALSE;
+		if ( ! $this->is_payment_gateway_class_available() ) return FALSE;
 
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateways' ) );
 

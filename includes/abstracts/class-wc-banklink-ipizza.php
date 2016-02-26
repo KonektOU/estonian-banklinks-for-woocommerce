@@ -111,7 +111,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Debug response data
 		$this->debug( $_REQUEST );
 
-		if( $response && isset( $response['VK_STAMP'] ) ) {
+		if ( $response && isset( $response['VK_STAMP'] ) ) {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
@@ -131,7 +131,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$order      = wc_get_order( $request['VK_STAMP'] );
 		$return_url = $this->get_return_url( $order );
 
-		if( in_array( $order->get_status(), array( 'processing', 'cancelled' ) ) ) {
+		if ( in_array( $order->get_status(), array( 'processing', 'cancelled' ) ) ) {
 			wp_redirect( $return_url );
 
 			exit;
@@ -153,7 +153,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 
 		// Redirect to order details
-		if( isset( $request['VK_AUTO'] ) && $request['VK_AUTO'] == 'N' ) {
+		if ( isset( $request['VK_AUTO'] ) && $request['VK_AUTO'] == 'N' ) {
 			wp_redirect( $return_url );
 		}
 
@@ -228,9 +228,9 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		);
 
 		// Generate MAC string from the private key
-		$key        = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
-		$signature  = '';
-		$macString  = $this->generate_mac_string( $macFields );
+		$key       = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
+		$signature = '';
+		$macString = $this->generate_mac_string( $macFields );
 
 		// Try to sign the macstring
 		if ( ! openssl_sign( $macString, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {

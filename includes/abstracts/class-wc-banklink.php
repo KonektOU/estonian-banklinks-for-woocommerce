@@ -164,7 +164,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	function debug( $data ) {
-		if( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG === TRUE ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG === TRUE ) {
 			$logger = new WC_Logger();
 			$logger->add( $this->id, is_array( $data ) || is_object( $data ) ? print_r( $data, TRUE ) : $data );
 		}

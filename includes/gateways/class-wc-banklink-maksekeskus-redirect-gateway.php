@@ -111,7 +111,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		$post = '<form action="'. htmlspecialchars( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add other data as hidden fields
-		foreach( $macFields as $name => $value ) {
+		foreach ( $macFields as $name => $value ) {
 			$post .= '<input type="hidden" name="'. esc_attr( $name ) .'" value="'. esc_attr( $value ) .'">';
 		}
 
@@ -161,7 +161,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		$fields    = (array) $fields;
 		$variables = $type == 'request' ? $this->request_variable_order : $this->response_variable_order;
 
-		foreach( $variables as $variable ) {
+		foreach ( $variables as $variable ) {
 			$signature .= $fields[ $variable ];
 		}
 
@@ -181,7 +181,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		// Debug response data
 		$this->debug( $response );
 
-		if( $response && isset( $response['json'] ) ) {
+		if ( $response && isset( $response['json'] ) ) {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
@@ -202,11 +202,11 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		$order      = wc_get_order( $validation['data'] );
 
 		// Payment success
-		if( $validation['status'] == 'success' ) {
+		if ( $validation['status'] == 'success' ) {
 			// Get return URL
 			$return_url = $this->get_return_url( $order );
 
-			if( in_array( $order->get_status(), array( 'processing', 'cancelled', 'refunded', 'completed' ) ) ) {
+			if ( in_array( $order->get_status(), array( 'processing', 'cancelled', 'refunded', 'completed' ) ) ) {
 				// Order already dealt with
 			}
 			else {
@@ -216,7 +216,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			}
 		}
 		// Payment cancelled
-		elseif( $validation['status'] == 'cancelled' ) {
+		elseif ( $validation['status'] == 'cancelled' ) {
 			// Set status to on-hold
 			$order->update_status( 'cancelled', $this->get_title() . ': ' . __( 'Payment cancelled.', 'wc-gateway-estonia-banklink' ) );
 
@@ -224,7 +224,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			$return_url = $order->get_cancel_order_url();
 		}
 		// Payment started, waiting
-		elseif( $validation['status'] == 'received' ) {
+		elseif ( $validation['status'] == 'received' ) {
 			// Set status to on-hold
 			$order->update_status( 'on-hold', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
 
@@ -256,7 +256,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			'status' => 'failed'
 		);
 
-		if( ! is_array( $response ) || empty( $response ) || ! isset( $response['json'] ) ) {
+		if ( ! is_array( $response ) || empty( $response ) || ! isset( $response['json'] ) ) {
 			return $result;
 		}
 
@@ -265,22 +265,22 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 
 		$message   = @json_decode( $macFields );
 
-		if( ! $message ) {
+		if ( ! $message ) {
 			$message = @json_decode( stripslashes( $macFields ) );
 		}
 
-		if( ! $message ) {
+		if ( ! $message ) {
 			$message = @json_decode( htmlspecialchars_decode( $macFields ) );
 		}
 
-		if( ! $message || ! isset( $message->signature ) || ! $message->signature ) {
+		if ( ! $message || ! isset( $message->signature ) || ! $message->signature ) {
 			return $result;
 		}
 
 		$response_signature = $message->signature;
 
 		// Compare signatures
-		if( $this->get_response_signature( $message ) == $response_signature ) {
+		if ( $this->get_response_signature( $message ) == $response_signature ) {
 			switch( $message->status ) {
 				// Payment started, but not paid
 				case 'RECEIVED':

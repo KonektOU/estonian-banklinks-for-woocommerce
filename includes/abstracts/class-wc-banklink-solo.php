@@ -134,7 +134,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		// Debug response data
 		$this->debug( $_REQUEST );
 
-		if( !empty( $_REQUEST ) && isset( $_REQUEST['SOLOPMT_RETURN_MAC'] ) ) {
+		if ( !empty( $_REQUEST ) && isset( $_REQUEST['SOLOPMT_RETURN_MAC'] ) ) {
 			// Validate response
 			do_action( 'woocommerce_'. $this->id .'_check_response', $_REQUEST );
 		}
@@ -182,7 +182,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 		// Append data as needed
 		foreach ( $variableOrder as $key ) {
-			if( isset( $macFields[$key] ) ) {;
+			if ( isset( $macFields[$key] ) ) {;
 				$data	.= $macFields[$key] . '&';
 			}
 			else {
@@ -216,7 +216,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 		$data           = '';
 
-		foreach( $variableOrder as $var ) {
+		foreach ( $variableOrder as $var ) {
 			if ( isset( $params[ $var ] ) ) {
 				$data 	.= $params[ $var ] . '&';
 			}
