@@ -7,6 +7,7 @@
 	Author: Konekt OÜ
 	Author URI: http://www.konekt.ee
 	License: GPLv2 or later
+	Text Domain: wc-gateway-estonia-banklink
 */
 
 // Security check
