@@ -284,6 +284,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			switch( $message->status ) {
 				// Payment started, but not paid
 				case 'RECEIVED':
+				case 'CREATED':
 					$result['status'] = 'received';
 					$result['data']   = $message->paymentId;
 					$result['amount'] = $message->amount;
@@ -291,6 +292,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 
 				// Paid
 				case 'PAID':
+				case 'COMPLETED':
 					$result['status'] = 'success';
 					$result['data']   = $message->paymentId;
 					$result['amount'] = $message->amount;
