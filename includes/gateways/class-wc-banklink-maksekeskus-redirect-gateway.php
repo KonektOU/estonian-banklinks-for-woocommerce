@@ -1,18 +1,5 @@
 <?php
 class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
-	/**
-	 * Variables for request
-	 *
-	 * @var array
-	 */
-	private $request_variable_order  = array( 'shopId', 'paymentId', 'amount' );
-
-	/**
-	 * Variables for response
-	 *
-	 * @var array
-	 */
-	private $response_variable_order = array( 'paymentId', 'amount', 'status' );
 
 	/**
 	 * WC_Banklink_Maksekeskus_Redirect_Gateway
@@ -88,30 +75,31 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	 */
 	function generate_submit_form( $order_id ) {
 		// Get the order
-		$order      = wc_get_order( $order_id );
+		$order       = wc_get_order( $order_id );
 
 		// Request
-		$request    = array(
-			'shopId'    => $this->get_option( 'shop_id' ),
-			'paymentId' => $order->id,
-			'amount'    => round( $order->get_total(), 2 )
+		$request     = array(
+			'shop'      => $this->get_option( 'shop_id' ),
+			'amount'    => round( $order->get_total(), 2 ),
+			'reference' => $order->id,
+			'country'   => $order->billing_country,
+			'locale'    => $this->get_option( 'locale' )
 		);
 
-		// Add request signature
-		$request['signature'] = $this->get_request_signature( $request );
+		// Generate MAC code
+		$mac_code    = $this->get_signature( $request );
 
-		// Mac
-		$macFields = array(
-			'json'   => json_encode( $request ),
-			'locale' => $this->get_option( 'locale' ),
-			'country' => $order->billing_country,
+		// Form fields
+		$form_fields = array(
+			'json' => json_encode( $request, JSON_UNESCAPED_UNICODE ),
+			'mac'  => $mac_code
 		);
 
 		// Start form
 		$post = '<form action="'. htmlspecialchars( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add other data as hidden fields
-		foreach ( $macFields as $name => $value ) {
+		foreach ( $form_fields as $name => $value ) {
 			$post .= '<input type="hidden" name="'. esc_attr( $name ) .'" value="'. esc_attr( $value ) .'">';
 		}
 
@@ -120,7 +108,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		$post .= "</form>";
 
 		// Debug output
-		$this->debug( $macFields );
+		$this->debug( $form_fields );
 
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
@@ -130,42 +118,13 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	}
 
 	/**
-	 * Get signature for request
-	 *
-	 * @param  array $request MAC fields
-	 * @return string         Signature
-	 */
-	private function get_request_signature( $request ) {
-		return $this->get_signature( $request, 'request' );
-	}
-
-	/**
-	 * Get signature for response
-	 *
-	 * @param  array $response MAC fields
-	 * @return string          Signature
-	 */
-	private function get_response_signature( $response ) {
-		return $this->get_signature( $response, 'response' );
-	}
-
-	/**
 	 * Generate response/request signature of MAC fields
 	 *
-	 * @param  array  $fields MAC fields
-	 * @param  string $type   Type
+	 * @param  array  $fields Fields
 	 * @return string         Signature
 	 */
-	private function get_signature( $fields, $type ) {
-		$signature = '';
-		$fields    = (array) $fields;
-		$variables = $type == 'request' ? $this->request_variable_order : $this->response_variable_order;
-
-		foreach ( $variables as $variable ) {
-			$signature .= $fields[ $variable ];
-		}
-
-		return strtoupper( hash( 'sha512', $signature . $this->get_option( 'api_secret' ) ) );
+	private function get_signature( $fields ) {
+		return strtoupper( hash( 'sha512', json_encode( $fields, JSON_UNESCAPED_UNICODE ) . $this->get_option( 'api_secret' ) ) );
 	}
 
 	/**
@@ -198,8 +157,9 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	 * @return void
 	 */
 	function validate_bank_response( $response ) {
+		// Try to validate the response
 		$validation = $this->validate_bank_payment( $response );
-		$order      = wc_get_order( $validation['data'] );
+		$order      = wc_get_order( $validation['order_id'] );
 
 		// Payment success
 		if ( $validation['status'] == 'success' ) {
@@ -251,58 +211,59 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	function validate_bank_payment( $response ) {
 		// Result failed by default
 		$result    = array(
-			'data'   => '',
-			'amount' => '',
-			'status' => 'failed'
+			'order_id' => '',
+			'amount'   => '',
+			'status'   => 'failed'
 		);
 
 		if ( ! is_array( $response ) || empty( $response ) || ! isset( $response['json'] ) ) {
 			return $result;
 		}
 
-		// Get MAC fields from response
-		$macFields = $response['json'];
+		// Get fields from response
+		$json_data    = $response['json'];
+		$response_mac = $response['mac'];
 
-		$message   = @json_decode( $macFields );
-
-		if ( ! $message ) {
-			$message = @json_decode( stripslashes( $macFields ) );
-		}
+		$message   = @json_decode( $json_data );
 
 		if ( ! $message ) {
-			$message = @json_decode( htmlspecialchars_decode( $macFields ) );
+			$message = @json_decode( stripslashes( $json_data ) );
 		}
 
-		if ( ! $message || ! isset( $message->signature ) || ! $message->signature ) {
-			return $result;
+		if ( ! $message ) {
+			$message = @json_decode( htmlspecialchars_decode( $json_data ) );
 		}
-
-		$response_signature = $message->signature;
 
 		// Compare signatures
-		if ( $this->get_response_signature( $message ) == $response_signature ) {
+		if ( $this->get_signature( $message ) == $response_mac ) {
+			// Get order ID based on version
+			if( isset( $message->reference ) ) {
+				$result['order_id'] = $message->reference;
+			}
+			else {
+				$result['order_id'] = $message->paymentId;
+			}
+
+			// Set amount
+			$result['amount'] = $message->amount;
+
 			switch( $message->status ) {
 				// Payment started, but not paid
 				case 'RECEIVED':
 				case 'CREATED':
 					$result['status'] = 'received';
-					$result['data']   = $message->paymentId;
-					$result['amount'] = $message->amount;
 				break;
 
 				// Paid
 				case 'PAID':
 				case 'COMPLETED':
 					$result['status'] = 'success';
-					$result['data']   = $message->paymentId;
-					$result['amount'] = $message->amount;
 				break;
 
 				// Cancelled or paid
 				case 'CANCELLED':
 				case 'EXPIRED':
 					$result['status'] = 'cancelled';
-					$result['data']   = $message->paymentId;
 				break;
 
 				default:
