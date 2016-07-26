@@ -37,6 +37,9 @@ https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 
 == Changelog ==
 
+= 1.2 =
+* Nordea payments via IPIZZA protocol. Older SOLO protocol remains available.
+
 = 1.1 =
 * "Maksekeskus Redirect" gateway compability with newest system
 

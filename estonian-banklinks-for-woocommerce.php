@@ -3,7 +3,7 @@
 	Plugin Name: Estonian Banklinks for WooCommerce
 	Plugin URI: https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 	Description: Extends WooCommerce with most commonly used Estonian banklinks.
-	Version: 1.1
+	Version: 1.2
 	Author: Konekt OÜ
 	Author URI: http://www.konekt.ee
 	License: GPLv2 or later
@@ -75,6 +75,7 @@ class Estonian_Gateways_For_WooCommerce {
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-seb-gateway.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-swedbank-gateway.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-krediidipank-gateway.php';
+		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-nordea-ipizza-gateway.php';
 
 		// Solo
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-nordea-gateway.php';
@@ -122,6 +123,7 @@ class Estonian_Gateways_For_WooCommerce {
 		$gateways[] = 'WC_Banklink_Swedbank_Gateway';
 		$gateways[] = 'WC_Banklink_Krediidipank_Gateway';
 		$gateways[] = 'WC_Banklink_Nordea_Gateway';
+		$gateways[] = 'WC_Banklink_Nordea_Ipizza_Gateway';
 		$gateways[] = 'WC_Banklink_Maksekeskus_Redirect_Gateway';
 		$gateways[] = 'WC_Banklink_Estcard_Gateway';
 
