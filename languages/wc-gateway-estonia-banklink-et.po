@@ -1,20 +1,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Estonian Banklinks for WooCommerce\n"
-"POT-Creation-Date: 2015-09-30 21:23+0200\n"
-"PO-Revision-Date: 2015-09-30 21:23+0200\n"
+"POT-Creation-Date: 2016-08-02 09:02+0300\n"
+"PO-Revision-Date: 2016-08-02 09:03+0300\n"
 "Last-Translator: Risto Niinemets <risto@konekt.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.1\n"
+"X-Generator: Poedit 1.8.8\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
 "esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
 "esc_html_x:1,2c\n"
-"X-Poedit-Basepath: ../\n"
+"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -26,27 +26,27 @@ msgstr "Päringu URL"
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:47
 #: includes/abstracts/class-wc-banklink-solo.php:28
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:36
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:30
 msgid "Account ID"
 msgstr "Konto ID"
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:54
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:41
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:35
 msgid "Your Private Key"
 msgstr "Sinu privaatne võti"
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:59
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:46
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:40
 msgid "Private Key Password"
 msgstr "Privaatse võtme parool"
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:64
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:51
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:45
 msgid "Bank`s Public Key"
 msgstr "Panga avalik võti"
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:69
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:56
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:50
 msgid "Default language"
 msgstr "Vaikimisi keel"
 
@@ -59,15 +59,15 @@ msgstr ""
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:147
 #: includes/abstracts/class-wc-banklink-solo.php:158
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:232
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:214
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:229
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:174
 msgid "Payment completed."
 msgstr "Makse teostatud."
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:152
 #: includes/abstracts/class-wc-banklink-solo.php:163
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:237
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:229
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:234
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:189
 msgid "Payment not made or is not verified."
 msgstr "Makse pole teostatud või ei ole kinnitatud."
 
@@ -77,10 +77,10 @@ msgstr "Makse pole teostatud või ei ole kinnitatud."
 msgid "Order nr. %s payment"
 msgstr "Tellimuse %s makse"
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:267
+#: includes/abstracts/class-wc-banklink-ipizza.php:268
 #: includes/abstracts/class-wc-banklink-solo.php:115
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:124
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:119
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:120
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:107
 msgid "Pay"
 msgstr "Maksa"
 
@@ -194,16 +194,16 @@ msgstr ""
 msgid "Danske"
 msgstr "Danske"
 
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:15
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:9
 msgid "Estcard"
 msgstr "Estcard"
 
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:31
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:64
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:25
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:51
 msgid "Destination URL"
 msgstr "Sihtkoha URL"
 
-#: includes/gateways/class-wc-banklink-estcard-gateway.php:59
+#: includes/gateways/class-wc-banklink-estcard-gateway.php:53
 msgid ""
 "Default UI language locale sent to the bank. Currently supported: et, en, "
 "fi, de. Defaults to et."
@@ -219,54 +219,67 @@ msgstr "Krediidipank"
 msgid "LHV"
 msgstr "LHV"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:22
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:9
 msgid "Maksekeskus"
 msgstr "Maksekeskus"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:38
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:25
 msgid "Currency"
 msgstr "Valuuta"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:44
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:31
 msgid "Shop ID"
 msgstr "Poe ID"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:47
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:53
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:34
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:40
 msgid "This will be provided by Maksekeskus"
 msgstr "See antakse Maksekeskuse poolt"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:51
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:38
 msgid "API secret"
 msgstr "API salajane võti"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:57
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:44
 msgid "Preferred locale"
 msgstr "Eelistatud keel"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:59
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:46
 msgid "RFC-2616 format locale"
 msgstr "RFC-2616 formaadis keelekood"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:67
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:54
 msgid "URL, where customer is redirected to start the payment."
 msgstr "URL, kuhu klient saadetakse makse alustamiseks."
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:71
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:58
 msgid "Return URL"
 msgstr "Naasmise URL"
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:74
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:61
 msgid "URL, where customer is redirected after the payment."
 msgstr "URL, kuhu klient saadetakse peale maksmist."
 
-#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:221
+#: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:181
 msgid "Payment cancelled."
 msgstr "Makse katkestati."
 
 #: includes/gateways/class-wc-banklink-nordea-gateway.php:8
+#: includes/gateways/class-wc-banklink-nordea-ipizza-gateway.php:8
 msgid "Nordea"
 msgstr "Nordea"
+
+#: includes/gateways/class-wc-banklink-nordea-gateway.php:9
+msgid "Nordea payment gateway via SOLO protocol. Use for older clients."
+msgstr ""
+"Nordea pangalingi maksemeetod SOLO protokolliga. Kasutusel vanematel Nordea "
+"klientidel."
+
+#: includes/gateways/class-wc-banklink-nordea-ipizza-gateway.php:9
+msgid "Nordea payment gateway via IPIZZA protocol. Use for new clients."
+msgstr ""
+"Nordea pangalingi maksemeetod IPIZZA protokolliga. Kasutusel uuematel "
+"Nordea klientidel."
 
 #: includes/gateways/class-wc-banklink-seb-gateway.php:8
 msgid "SEB"
