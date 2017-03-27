@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Estonian Banklinks for WooCommerce\n"
-"POT-Creation-Date: 2016-08-02 09:02+0300\n"
+"POT-Creation-Date: 2017-03-27 16:13+0300\n"
 "PO-Revision-Date: 2015-09-30 21:23+0200\n"
 "Last-Translator: Risto Niinemets <risto@konekt.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.12\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
 "esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
@@ -20,64 +20,64 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:40
+#: includes/abstracts/class-wc-banklink-ipizza.php:51
 #: includes/abstracts/class-wc-banklink-solo.php:21
 msgid "Request URL"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:47
+#: includes/abstracts/class-wc-banklink-ipizza.php:58
 #: includes/abstracts/class-wc-banklink-solo.php:28
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:30
 msgid "Account ID"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:54
+#: includes/abstracts/class-wc-banklink-ipizza.php:65
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:35
 msgid "Your Private Key"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:59
+#: includes/abstracts/class-wc-banklink-ipizza.php:70
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:40
 msgid "Private Key Password"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:64
+#: includes/abstracts/class-wc-banklink-ipizza.php:75
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:45
 msgid "Bank`s Public Key"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:69
+#: includes/abstracts/class-wc-banklink-ipizza.php:80
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:50
 msgid "Default language"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:72
+#: includes/abstracts/class-wc-banklink-ipizza.php:83
 msgid ""
 "Default UI language locale sent to the bank. Currently supported: et, en, "
 "ru. Defaults to et."
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:147
+#: includes/abstracts/class-wc-banklink-ipizza.php:158
 #: includes/abstracts/class-wc-banklink-solo.php:158
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:229
 #: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:174
 msgid "Payment completed."
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:152
+#: includes/abstracts/class-wc-banklink-ipizza.php:163
 #: includes/abstracts/class-wc-banklink-solo.php:163
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:234
 #: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:189
 msgid "Payment not made or is not verified."
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:224
+#: includes/abstracts/class-wc-banklink-ipizza.php:235
 #: includes/abstracts/class-wc-banklink-solo.php:94
 #, php-format
 msgid "Order nr. %s payment"
 msgstr ""
 
-#: includes/abstracts/class-wc-banklink-ipizza.php:268
+#: includes/abstracts/class-wc-banklink-ipizza.php:278
 #: includes/abstracts/class-wc-banklink-solo.php:115
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:120
 #: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:107
@@ -209,6 +209,10 @@ msgstr ""
 
 #: includes/gateways/class-wc-banklink-lhv-gateway.php:8
 msgid "LHV"
+msgstr ""
+
+#: includes/gateways/class-wc-banklink-liisi-gateway.php:8
+msgid "Liisi"
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:9

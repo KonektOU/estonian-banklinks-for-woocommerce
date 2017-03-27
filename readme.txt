@@ -1,9 +1,9 @@
 === Estonian Banklinks for WooCommerce ===
-Contributors: RistoNiinemets, mstannu
+Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
-Tested up to: 4.6.1
-Stable tag: 1.2
+Tested up to: 4.7.3
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Extends WooCommerce with most commonly used Estonian banklinks. All in one.
 
 This plugin consists of several Estonian banklinks:
 
-*   Danske, Krediidipank, LHV, SEB, Swedbank, Nordea (iPizza protocol)
+*   Danske, Krediidipank, LHV, SEB, Swedbank, Nordea, Liisi ID (iPizza protocol)
 *   Nordea (Solo protocol)
 *   Maksekeskus (Redirect)
 *   Estcard (E-Commerce Payment Gateway)
@@ -25,8 +25,8 @@ https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 == Installation ==
 
 1. Upload `estonian-banklinks-for-woocommerce` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to WooCommerce - settings
+2. Activate the plugin through the `Plugins` menu in WordPress
+3. Go to WooCommerce - Settings
 4. Payment gateways will be available to be configured in "Checkout" settings
 
 == Screenshots ==
@@ -36,6 +36,9 @@ https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.3 =
+* Liisi ID via IPIZZA protocol.
 
 = 1.2 =
 * Nordea payments via IPIZZA protocol. Older SOLO protocol remains available.

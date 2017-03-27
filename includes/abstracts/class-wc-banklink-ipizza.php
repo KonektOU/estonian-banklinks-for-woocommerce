@@ -13,11 +13,22 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	);
 
 	/**
-	 * Languagecodes
+	 * Language codes
 	 *
 	 * @var array
 	 */
-	private $lang_codes = array( 'et' => 'EST', 'en' => 'ENG', 'ru' => 'RUS' );
+	private $lang_codes = array(
+		'et' => 'EST',
+		'en' => 'ENG',
+		'ru' => 'RUS'
+	);
+
+	/**
+	 * Encoding
+	 *
+	 * @var string
+	 */
+	public $encoding = 'utf-8';
 
 	/**
 	 * WC_Banklink_Ipizza
@@ -260,9 +271,8 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'" />';
 		}
 
-		// avoids occasional encoding errors for SEB
-		$vk_encoding = ( 'nordea_ipizza' === $this->id ) ? 'UTF-8' : 'utf-8';
-		$post .= '<input type="hidden" name="VK_ENCODING" value="' . $vk_encoding . '" />';
+		// Add encoding
+		$post .= '<input type="hidden" name="VK_ENCODING" value="' . $this->encoding . '" />';
 
 		// Show "Pay" button and end the form
 		$post .= '<input type="submit" name="send_banklink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'">';
