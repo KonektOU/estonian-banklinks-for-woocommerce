@@ -139,7 +139,19 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	function is_available() {
-		return $this->get_option( 'enabled', 'no' ) != 'no' && array_intersect( array( 'all', WC()->customer->get_country() ), $this->get_option( 'countries' ) );
+		if( WC()->customer == null ) {
+			return false;
+		}
+
+		// Get customer country based on WooCommerce version
+		if( version_compare( WC_VERSION, '3.0', '>' ) ) {
+			$customer_country = WC()->customer->get_billing_country();
+		}
+		else {
+			$customer_country = WC()->customer->get_country();
+		}
+
+		return $this->get_option( 'enabled', 'no' ) != 'no' && array_intersect( array( 'all', $customer_country ), $this->get_option( 'countries' ) );
 	}
 
 	/**
