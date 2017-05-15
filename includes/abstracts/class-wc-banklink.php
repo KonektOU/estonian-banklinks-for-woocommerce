@@ -143,15 +143,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 			return false;
 		}
 
-		// Get customer country based on WooCommerce version
-		if( version_compare( WC_VERSION, '3.0', '>' ) ) {
-			$customer_country = WC()->customer->get_billing_country();
-		}
-		else {
-			$customer_country = WC()->customer->get_country();
-		}
-
-		return $this->get_option( 'enabled', 'no' ) != 'no' && array_intersect( array( 'all', $customer_country ), $this->get_option( 'countries' ) );
+		return $this->get_option( 'enabled', 'no' ) != 'no' && array_intersect( array( 'all', wc_estonian_gateways_get_customer_billing_country() ), $this->get_option( 'countries' ) );
 	}
 
 	/**
@@ -178,7 +170,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	function debug( $data ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG === TRUE ) {
 			$logger = new WC_Logger();
-			$logger->add( $this->id, is_array( $data ) || is_object( $data ) ? print_r( $data, TRUE ) : $data );
+			$logger->add( $this->id, is_array( $data ) || is_object( $data ) ? print_r( $data, TRUE ) : var_export( $data, true ) );
 		}
 	}
 }

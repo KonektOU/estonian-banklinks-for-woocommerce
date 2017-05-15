@@ -3,7 +3,7 @@
 	Plugin Name: Estonian Banklinks for WooCommerce
 	Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
 	Description: Extends WooCommerce with most commonly used Estonian banklinks.
-	Version: 1.3.1
+	Version: 1.3.2
 	Author: Konekt OÜ
 	Author URI: https://www.konekt.ee
 	License: GPLv2 or later
@@ -64,6 +64,9 @@ class Estonian_Gateways_For_WooCommerce {
 	 * @return void
 	 */
 	public function includes() {
+		// Compatibility helpers
+		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/compatibility-helpers.php';
+
 		// Abstract classes
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-ipizza.php';
@@ -99,7 +102,7 @@ class Estonian_Gateways_For_WooCommerce {
 	 * Load translations
 	 *
 	 * Allows overriding the offical translation by placing
-	 * the translation files in wp-content/languages/woocommerce-estonian-banklinks
+	 * the translation files in wp-content/languages/estonian-banklinks-for-woocommerce
 	 *
 	 * @return void
 	 */
@@ -107,7 +110,7 @@ class Estonian_Gateways_For_WooCommerce {
 		$domain = 'wc-gateway-estonia-banklink';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-		load_textdomain( $domain, WP_LANG_DIR . '/woocommerce-estonian-banklinks/' . $domain . '-' . $locale . '.mo' );
+		load_textdomain( $domain, WP_LANG_DIR . '/estonian-banklinks-for-woocommerce/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) ) . '/languages/' );
 	}
 

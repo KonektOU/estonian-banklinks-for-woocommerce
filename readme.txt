@@ -3,7 +3,7 @@ Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
 Tested up to: 4.7.4
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,10 @@ https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.3.2 =
+* Fix: Order ID and such should not be accessed directly with WooCommerce 3.0.x. Compatibility fix.
+* Save transaction ID with iPizza protocol
 
 = 1.3.1 =
 * Compability with WooCommerce 3.0.x

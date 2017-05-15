@@ -84,14 +84,14 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		// Set MAC fields
 		$macFields		= array(
 			'SOLOPMT_VERSION'		=> '0003',
-			'SOLOPMT_STAMP'			=> $order->id,
+			'SOLOPMT_STAMP'			=> wc_estonian_gateways_get_order_id( $order ),
 			'SOLOPMT_RCV_ID'		=> $this->get_option( 'solopmt_rcv_id' ),
 			'SOLOPMT_RCV_ACCOUNT'	=> $this->get_option( 'solopmt_rcv_account' ),
 			'SOLOPMT_LANGUAGE'		=> $this->get_option( 'solopmt_language' ),
 			'SOLOPMT_AMOUNT'		=> round( $order->get_total(), 2 ),
-			'SOLOPMT_REF'			=> $this->generate_ref_num( $order->id ),
+			'SOLOPMT_REF'			=> $this->generate_ref_num( wc_estonian_gateways_get_order_id( $order ) ),
 			'SOLOPMT_DATE'			=> 'EXPRESS',
-			'SOLOPMT_MSG'			=> sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), $order->id ),
+			'SOLOPMT_MSG'			=> sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
 			'SOLOPMT_RETURN'		=> $this->notify_url,
 			'SOLOPMT_CANCEL'		=> $this->notify_url,
 			'SOLOPMT_REJECT'		=> $this->notify_url,
@@ -152,19 +152,22 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 		$order	= wc_get_order( $request['SOLOPMT_RETURN_STAMP'] );
 
+		$this->debug( $request );
+
 		// Check validation
 		if ( isset( $validationResult['payment'] ) && $validationResult['payment'] == 'success' ) {
 			// Payment completed
-			$order->add_order_note( $this->title . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
+			$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
 			$order->payment_complete();
 		}
 		else {
 			// Set status to failed
-			$order->update_status( 'failed', $this->title . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+			$order->update_status( 'failed', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
 		}
 
 		// Redirect to order details
 		wp_redirect( $this->get_return_url( $order ) );
+		exit;
 	}
 
 	/**
@@ -227,7 +230,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 		$keyvers 		= $this->get_option( 'solopmt_keyvers' );
 		$mac 			= $this->get_option( 'solopmt_mac' );
-		$data			.= $mac."&";
+		$data			.= $mac . '&';
 
 		// Encrypt data
 		$data		= ( $keyvers == '0001' ) ? md5( $data ) : sha1( $data );

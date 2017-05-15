@@ -81,7 +81,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		$request     = array(
 			'shop'      => $this->get_option( 'shop_id' ),
 			'amount'    => round( $order->get_total(), 2 ),
-			'reference' => $order->id,
+			'reference' => wc_estonian_gateways_get_order_id( $order ),
 			'country'   => $order->billing_country,
 			'locale'    => $this->get_option( 'locale' )
 		);

@@ -87,7 +87,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'action'       => 'gaf',
 			'ver'          => '004',
 			'id'           => $this->get_option( 'merchant_id' ),
-			'ecuno'        => $this->generate_unique_ecuno( $order->id ),
+			'ecuno'        => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
 			'eamount'      => ( round( $order->get_total(), 2 ) * 100 ),
 			'cur'          => get_woocommerce_currency(),
 			'datetime'     => date( 'YmdHis' ),
