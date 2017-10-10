@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Estonian Banklinks for WooCommerce\n"
-"POT-Creation-Date: 2017-05-15 11:44+0300\n"
+"POT-Creation-Date: 2017-10-10 11:21+0300\n"
 "PO-Revision-Date: 2015-09-30 21:23+0200\n"
 "Last-Translator: Risto Niinemets <risto@konekt.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.0.4\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
 "esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
@@ -58,14 +58,14 @@ msgid ""
 msgstr ""
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:158
-#: includes/abstracts/class-wc-banklink-solo.php:158
+#: includes/abstracts/class-wc-banklink-solo.php:160
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:229
 #: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:174
 msgid "Payment completed."
 msgstr ""
 
 #: includes/abstracts/class-wc-banklink-ipizza.php:163
-#: includes/abstracts/class-wc-banklink-solo.php:163
+#: includes/abstracts/class-wc-banklink-solo.php:165
 #: includes/gateways/class-wc-banklink-estcard-gateway.php:234
 #: includes/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php:189
 msgid "Payment not made or is not verified."
@@ -204,7 +204,7 @@ msgid ""
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-krediidipank-gateway.php:8
-msgid "Krediidipank"
+msgid "COOP pank"
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-lhv-gateway.php:8
@@ -262,15 +262,19 @@ msgstr ""
 
 #: includes/gateways/class-wc-banklink-nordea-gateway.php:8
 #: includes/gateways/class-wc-banklink-nordea-ipizza-gateway.php:8
-msgid "Nordea"
+msgid "Luminor"
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-nordea-gateway.php:9
-msgid "Nordea payment gateway via SOLO protocol. Use for older clients."
+msgid ""
+"Luminor (former Nordea) payment gateway via SOLO protocol. Use for older "
+"clients."
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-nordea-ipizza-gateway.php:9
-msgid "Nordea payment gateway via IPIZZA protocol. Use for new clients."
+msgid ""
+"Luminor (former Nordea) payment gateway via IPIZZA protocol. Use for new "
+"clients."
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-seb-gateway.php:8
