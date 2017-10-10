@@ -89,19 +89,19 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	/**
 	 * Generates MAC string as needed according to the service number
 	 *
-	 * @param  array  $macFields MAC fields
-	 * @return string            MAC string
+	 * @param  array  $mac_fields MAC fields
+	 * @return string             MAC string
 	 */
-	function generate_mac_string( $macFields ) {
+	function generate_mac_string( $mac_fields ) {
 		// Get service number
-		$serviceNumber = $macFields[ 'VK_SERVICE' ];
+		$service_number = $mac_fields[ 'VK_SERVICE' ];
 
 		// Data holder
-		$data          = '';
+		$data           = '';
 
 		// Append data as needed
-		foreach ( $this->variable_order[ $serviceNumber ] as $key ) {
-			$value     = $macFields[ $key ];
+		foreach ( $this->variable_order[ $service_number ] as $key ) {
+			$value     = $mac_fields[ $key ];
 			$data      .= str_pad( mb_strlen( $value ), 3, '0', STR_PAD_LEFT ) . $value;
 		}
 
@@ -129,12 +129,13 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			do_action( 'woocommerce_'. $this->id .'_check_response', $response );
 		}
 		else {
-			wp_die( 'Response failed', $this->title, array( 'response' => 200 ) );
+			wp_die( 'Response failed', $this->get_title(), array( 'response' => 200 ) );
 		}
 	}
 
 	/**
 	 * Validate response from the bank
+	 *
 	 * @param  array $request Response
 	 * @return void
 	 */
@@ -155,12 +156,12 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Check validation
 		if ( isset( $validation['payment'] ) && $validation['payment'] == 'completed' ) {
 			// Payment completed
-			$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
+			$order->add_order_note( sprintf( '%s: %s', $this->get_title(), . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 			$order->payment_complete( isset( $request['VK_T_NO'] ) ? $request['VK_T_NO'] : '' );
 		}
 		else {
 			// Set status to failed
-			$order->update_status( 'failed', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+			$order->update_status( 'failed', sprintf( '%s: %s', $this->get_title(), __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) ) );
 		}
 
 		// Redirect to order details
@@ -174,27 +175,27 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	/**
 	 * Validate the results with public key
 	 *
-	 * @param  array  $params Fields received from the bank
-	 * @param  string $pubkey Public key
-	 * @return array          Array containing information about the validation
+	 * @param  array  $params     Fields received from the bank
+	 * @param  string $public_key Public key
+	 * @return array              Array containing information about the validation
 	 */
-	function validate_banklink_payment( $params, $pubkey ) {
+	function validate_banklink_payment( $params, $public_key ) {
 		// Set some variables
 		$result     = array( 'payment' => 'failed' );
 		$vk_service = $params['VK_SERVICE'];
-		$macFields  = array();
+		$mac_fields = array();
 
 		// Generate MAC fields
 		foreach ( (array) $params as $f => $v ) {
 			if ( substr($f, 0, 3) == 'VK_' ) {
-				$macFields[$f] = $v;
+				$mac_fields[$f] = $v;
 			}
 		}
 
 		// Get public key
-		$key        = openssl_pkey_get_public( $pubkey );
-		$macString  = $this->generate_mac_string( $macFields );
-		$verify_mac = openssl_verify( $macString, base64_decode( $macFields['VK_MAC'] ), $key, OPENSSL_ALGO_SHA1 );
+		$key        = openssl_pkey_get_public( $public_key );
+		$mac_string = $this->generate_mac_string( $mac_fields );
+		$verify_mac = openssl_verify( $mac_string, base64_decode( $mac_fields['VK_MAC'] ), $key, OPENSSL_ALGO_SHA1 );
 
 		// Check the key
 		if ( $verify_mac === 1 ) {
@@ -224,7 +225,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$datetime   = new DateTime( 'NOW' );
 
 		// Set MAC fields
-		$macFields  = array(
+		$mac_fields = array(
 			'VK_SERVICE'  => '1012',
 			'VK_VERSION'  => '008',
 			'VK_SND_ID'   => $this->get_option( 'vk_snd_id' ),
@@ -239,17 +240,19 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		);
 
 		// Generate MAC string from the private key
-		$key       = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
-		$signature = '';
-		$macString = $this->generate_mac_string( $macFields );
+		$key        = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
+		$signature  = '';
+		$mac_string = $this->generate_mac_string( $mac_fields );
 
-		// Try to sign the macstring
-		if ( ! openssl_sign( $macString, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
+		// Try to sign the mac string
+		if ( ! openssl_sign( $mac_string, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
+			$this->debug( 'Unable to generate signature', 'emergency' );
+
 			die( "Unable to generate signature" );
 		}
 
 		// Encode signature
-		$macFields['VK_MAC'] = base64_encode( $signature );
+		$mac_fields['VK_MAC'] = base64_encode( $signature );
 
 		// language support: informs bank of preferred UI language
 		$lang = $this->get_option( 'vk_lang' );
@@ -261,13 +264,13 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			$lang = qtrans_getLanguage(); // qtranslate
 		}
 
-		$macFields['VK_LANG'] = isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : $this->lang_codes[0];
+		$mac_fields['VK_LANG'] = isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : $this->lang_codes[0];
 
 		// Start form
 		$post = '<form action="'. esc_attr( $this->get_option( 'vk_dest' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add fields to form inputs
-		foreach ( $macFields as $name => $value ) {
+		foreach ( $mac_fields as $name => $value ) {
 			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'" />';
 		}
 
@@ -279,7 +282,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$post .= "</form>";
 
 		// Debug output
-		$this->debug( $macFields );
+		$this->debug( $mac_fields );
 
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );

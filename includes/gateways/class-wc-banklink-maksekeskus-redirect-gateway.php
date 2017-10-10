@@ -82,7 +82,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			'shop'      => $this->get_option( 'shop_id' ),
 			'amount'    => round( $order->get_total(), 2 ),
 			'reference' => wc_estonian_gateways_get_order_id( $order ),
-			'country'   => $order->billing_country,
+			'country'   => wc_estonian_gateways_get_customer_billing_country( $order ),
 			'locale'    => $this->get_option( 'locale' )
 		);
 
@@ -171,14 +171,14 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			}
 			else {
 				// Payment completed
-				$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
+				$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 				$order->payment_complete();
 			}
 		}
 		// Payment cancelled
 		elseif ( $validation['status'] == 'cancelled' ) {
 			// Set status to on-hold
-			$order->update_status( 'cancelled', $this->get_title() . ': ' . __( 'Payment cancelled.', 'wc-gateway-estonia-banklink' ) );
+			$order->update_status( 'cancelled', sprintf( '%s: %s', $this->get_title(), __( 'Payment cancelled.', 'wc-gateway-estonia-banklink' ) ) );
 
 			// Cancel order URL
 			$return_url = $order->get_cancel_order_url();
@@ -186,7 +186,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		// Payment started, waiting
 		elseif ( $validation['status'] == 'received' ) {
 			// Set status to on-hold
-			$order->update_status( 'on-hold', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+			$order->update_status( 'on-hold', sprintf( '%s: %s', $this->get_title(), __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) ) );
 
 			// Go back to pay
 			$return_url = $order->get_checkout_payment_url();

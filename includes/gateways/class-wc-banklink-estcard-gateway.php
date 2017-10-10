@@ -83,7 +83,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$lang_code           = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
 
 		// Set MAC fields
-		$macFields  = array(
+		$mac_fields  = array(
 			'action'       => 'gaf',
 			'ver'          => '004',
 			'id'           => $this->get_option( 'merchant_id' ),
@@ -99,20 +99,22 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 		$key        = openssl_pkey_get_private( $this->get_option( 'private_key' ), $this->get_option( 'private_key_pass' ) );
 		$signature  = '';
-		$macString  = $this->generate_mac_string( $macFields );
+		$mac_string = $this->generate_mac_string( $mac_fields );
 
 		// Try to sign the macstring
-		if ( ! openssl_sign( $macString, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
+		if ( ! openssl_sign( $mac_string, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
+			$this->debug( 'Unable to generate signature', 'emergency' );
+
 			die( "Unable to generate signature" );
 		}
 
-		$macFields['mac'] = bin2hex( $signature );
+		$mac_fields['mac'] = bin2hex( $signature );
 
 		// Start form
 		$post = '<form action="'. esc_attr( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
 
 		// Add other data as hidden fields
-		foreach ( $macFields as $name => $value ) {
+		foreach ( $mac_fields as $name => $value ) {
 			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'">';
 		}
 
@@ -121,7 +123,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$post .= "</form>";
 
 		// Debug output
-		$this->debug( $macFields );
+		$this->debug( $mac_fields );
 
 		// Add inline JS
 		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
@@ -226,12 +228,12 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			// Check validation
 			if ( isset( $validation['status'] ) && $validation['status'] == 'success' ) {
 				// Payment completed
-				$order->add_order_note( $this->get_title() . ': ' . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) );
+				$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 				$order->payment_complete();
 			}
 			else {
 				// Set status to failed
-				$order->update_status( 'failed', $this->get_title() . ': ' . __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) );
+				$order->update_status( 'failed', sprintf( '%s: %s', $this->get_title(), __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) ) );
 			}
 		}
 
@@ -260,8 +262,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		}
 
 		// Generate mac string and verify signature
-		$macString    = $this->generate_mac_string( $response );
-		$verification = openssl_verify( $macString, pack( 'H*', $response['mac'] ), $this->get_option( 'public_key' ), OPENSSL_ALGO_SHA1 );
+		$mac_string   = $this->generate_mac_string( $response );
+		$verification = openssl_verify( $mac_string, pack( 'H*', $response['mac'] ), $this->get_option( 'public_key' ), OPENSSL_ALGO_SHA1 );
 
 		// Check signature verification
 		if ( $verification === 1 ) {
@@ -283,8 +285,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	/**
 	 * Search for existing postmeta value for the key "_ecuno", which has to be unique
 	 *
-	 * @param string $ecuno Unique transaction identifier
-	 * @return int|bool WP_Post ID or false when none found
+	 * @param  string   $ecuno Unique transaction identifier
+	 * @return int|bool        WP_Post ID or false when none found
 	 */
 	function get_order_id_by_ecuno_value( $ecuno ) {
 		global $wpdb;
@@ -300,8 +302,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	/**
 	 * Generate a new ecuno for order and store it in database. There can be only one per order.
 	 *
-	 * @param int $order_id WC_Order ID
-	 * @return string|bool Transaction identifier or false on failure
+	 * @param  int         $order_id WC_Order ID
+	 * @return string|bool           Transaction identifier or false on failure
 	 */
 	function generate_unique_ecuno( $order_id ) {
 		$tries = 0;
@@ -324,7 +326,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			$tries++;
 		}
 
-		error_log( 'Error: could not generate a unique ecuno for Estcard payment transaction' );
+		$this->debug( 'Could not generate a unique ecuno for Estcard payment transaction', 'emergency' );
 
 		return false;
 	}
