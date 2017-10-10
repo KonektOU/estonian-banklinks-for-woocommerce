@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Estonian Banklinks for WooCommerce\n"
-"POT-Creation-Date: 2017-10-10 11:21+0300\n"
+"POT-Creation-Date: 2017-10-10 11:36+0300\n"
 "PO-Revision-Date: 2015-09-30 21:23+0200\n"
 "Last-Translator: Risto Niinemets <risto@konekt.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
@@ -204,7 +204,7 @@ msgid ""
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-krediidipank-gateway.php:8
-msgid "COOP pank"
+msgid "Coop pank"
 msgstr ""
 
 #: includes/gateways/class-wc-banklink-lhv-gateway.php:8

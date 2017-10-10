@@ -5,7 +5,7 @@ class WC_Banklink_Krediidipank_Gateway extends WC_Banklink_Ipizza {
 	 */
 	function __construct() {
 		$this->id           = 'krediidipank';
-		$this->method_title = __( 'COOP pank', 'wc-gateway-estonia-banklink' );
+		$this->method_title = __( 'Coop pank', 'wc-gateway-estonia-banklink' );
 		$this->logo         = $this->get_option( 'logo', plugins_url( 'assets/img/coop.gif', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
 
 		parent::__construct();

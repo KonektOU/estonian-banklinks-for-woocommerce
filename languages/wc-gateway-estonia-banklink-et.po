@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Estonian Banklinks for WooCommerce\n"
-"POT-Creation-Date: 2017-10-10 11:21+0300\n"
-"PO-Revision-Date: 2017-10-10 11:23+0300\n"
+"POT-Creation-Date: 2017-10-10 11:36+0300\n"
+"PO-Revision-Date: 2017-10-10 11:37+0300\n"
 "Last-Translator: Risto Niinemets <risto@konekt.ee>\n"
 "Language-Team: Konekt OÜ <info@konekt.ee>\n"
 "Language: et\n"
@@ -12,7 +12,8 @@ msgstr ""
 "X-Generator: Poedit 2.0.4\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
-"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -211,8 +212,8 @@ msgstr ""
 "en, fi, de. Vaikimisi et."
 
 #: includes/gateways/class-wc-banklink-krediidipank-gateway.php:8
-msgid "COOP pank"
-msgstr ""
+msgid "Coop pank"
+msgstr "Coop pank"
 
 #: includes/gateways/class-wc-banklink-lhv-gateway.php:8
 msgid "LHV"
@@ -270,7 +271,7 @@ msgstr "Makse katkestati."
 #: includes/gateways/class-wc-banklink-nordea-gateway.php:8
 #: includes/gateways/class-wc-banklink-nordea-ipizza-gateway.php:8
 msgid "Luminor"
-msgstr ""
+msgstr "Luminor"
 
 #: includes/gateways/class-wc-banklink-nordea-gateway.php:9
 msgid ""
