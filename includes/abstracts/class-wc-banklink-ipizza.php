@@ -156,7 +156,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Check validation
 		if ( isset( $validation['payment'] ) && $validation['payment'] == 'completed' ) {
 			// Payment completed
-			$order->add_order_note( sprintf( '%s: %s', $this->get_title(), . __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
+			$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 			$order->payment_complete( isset( $request['VK_T_NO'] ) ? $request['VK_T_NO'] : '' );
 		}
 		else {
