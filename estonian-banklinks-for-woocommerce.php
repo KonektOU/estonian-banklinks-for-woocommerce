@@ -3,7 +3,7 @@
 	Plugin Name: Estonian Banklinks for WooCommerce
 	Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
 	Description: Extends WooCommerce with most commonly used Estonian banklinks.
-	Version: 1.3.2
+	Version: 1.3.3
 	Author: Konekt OÜ
 	Author URI: https://www.konekt.ee
 	License: GPLv2 or later

@@ -2,8 +2,8 @@
 Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
-Tested up to: 4.7.4
-Stable tag: 1.3.2
+Tested up to: 4.8.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,13 +13,12 @@ Extends WooCommerce with most commonly used Estonian banklinks. All in one.
 
 This plugin consists of several Estonian banklinks:
 
-*   Danske, Krediidipank, LHV, SEB, Swedbank, Nordea, Liisi ID (iPizza protocol)
-*   Nordea (Solo protocol)
+*   Danske, Coop, LHV, SEB, Swedbank, Luminor, Liisi ID (iPizza protocol)
+*   Luminor (Solo protocol)
 *   Maksekeskus (Redirect)
 *   Estcard (E-Commerce Payment Gateway)
 
-Code is maintained and developed at Github. Contributions and discussions are very welcome:
-https://github.com/KonektOU/estonian-banklinks-for-woocommerce
+Code is maintained and developed at Github. Contributions and discussions are very welcome at [Github] (https://github.com/KonektOU/estonian-banklinks-for-woocommerce)
 
 
 == Installation ==
@@ -36,6 +35,11 @@ https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.3.3 =
+* Renamed Krediidipank to Coop
+* Renamed Nordea to Luminor
+* Fix: WooCommerce 3 minor compatibility fix with Maksekeskus
 
 = 1.3.2 =
 * Fix: Order ID and such should not be accessed directly with WooCommerce 3.0.x. Compatibility fix.
@@ -61,3 +65,9 @@ https://github.com/KonektOU/estonian-banklinks-for-woocommerce
 
 = 1.0 =
 * Release
+
+
+== Upgrade Notice ==
+
+= 1.3.3 =
+Krediidipank has been renamed to Coop and Nordea to Luminor. New logo for Coop is provided in the update, but you will have to change logo file URL from settings manually (krediidipank.png -> coop.png in the end of the logo URL).
