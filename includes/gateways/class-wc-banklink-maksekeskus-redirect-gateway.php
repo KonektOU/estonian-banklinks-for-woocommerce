@@ -77,13 +77,24 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		// Get the order
 		$order       = wc_get_order( $order_id );
 
+		// Return URL
+		$return_url = array(
+			'url'    => $this->get_option( 'return_url' ),
+			'method' => 'POST'
+		);
+
 		// Request
 		$request     = array(
-			'shop'      => $this->get_option( 'shop_id' ),
-			'reference' => wc_estonian_gateways_get_order_id( $order ),
-			'country'   => wc_estonian_gateways_get_customer_billing_country( $order ),
-			'locale'    => $this->get_option( 'locale' )
+			'shop'            => $this->get_option( 'shop_id' ),
 			'amount'          => wc_estonian_gateways_get_order_total( $order ),
+			'reference'       => wc_estonian_gateways_get_order_id( $order ),
+			'country'         => wc_estonian_gateways_get_customer_billing_country( $order ),
+			'locale'          => $this->get_option( 'locale' ),
+			'transaction_url' => array(
+				'return_url'       => $return_url,
+				'cancel_url'       => $return_url,
+				'notification_url' => $return_url
+			)
 		);
 
 		// Generate MAC code
