@@ -97,6 +97,9 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			)
 		);
 
+		// Allow hooking into the data
+		$request     = $this->hookable_transaction_data( $request, $order );
+
 		// Generate MAC code
 		$mac_code    = $this->get_signature( $request );
 

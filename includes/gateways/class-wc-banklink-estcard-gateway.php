@@ -83,7 +83,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$lang_code           = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
 
 		// Set MAC fields
-		$mac_fields  = array(
+		$mac_fields          = array(
 			'action'         => 'gaf',
 			'ver'            => '004',
 			'id'             => $this->get_option( 'merchant_id' ),
@@ -97,6 +97,9 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'lang'           => $lang_code,
 			'charEncoding'   => 'utf-8'
 		);
+
+		// Allow hooking into the data
+		$mac_fields = $this->hookable_transaction_data( $mac_fields, $order );
 
 		$key        = openssl_pkey_get_private( $this->get_option( 'private_key' ), $this->get_option( 'private_key_pass' ) );
 		$signature  = '';

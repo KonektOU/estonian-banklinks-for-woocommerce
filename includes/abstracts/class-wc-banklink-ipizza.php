@@ -239,6 +239,9 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			'VK_DATETIME' => $datetime->format( DateTime::ISO8601 )
 		);
 
+		// Allow hooking into the data
+		$mac_fields = $this->hookable_transaction_data( $mac_fields, $order );
+
 		// Generate MAC string from the private key
 		$key        = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
 		$signature  = '';

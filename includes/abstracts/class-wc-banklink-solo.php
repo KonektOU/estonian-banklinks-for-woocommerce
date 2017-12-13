@@ -100,6 +100,9 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 			'SOLOPMT_CUR'         => get_woocommerce_currency(),
 		);
 
+		// Allow hooking into the data
+		$mac_fields                = $this->hookable_transaction_data( $mac_fields, $order );
+
 		// Generate MAC string
 		$mac_fields['SOLOPMT_MAC'] = $this->generate_mac_string( $mac_fields );
 
