@@ -29,3 +29,15 @@ function wc_estonian_gateways_get_customer_billing_country() {
 		return WC()->customer->get_country();
 	}
 }
+
+/**
+ * Get order total and format it to string. Fixes issue with PHP7.1
+ * precision
+ *
+ * @since  1.3.4
+ * @param  WC_Order $order Order
+ * @return string          Formatted order total
+ */
+function wc_estonian_gateways_get_order_total( $order ) {
+	return number_format( round( $order->get_total(), 2 ), 2, '.', '' );
+}

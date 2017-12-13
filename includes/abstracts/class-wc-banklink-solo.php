@@ -88,7 +88,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 			'SOLOPMT_RCV_ID'      => $this->get_option( 'solopmt_rcv_id' ),
 			'SOLOPMT_RCV_ACCOUNT' => $this->get_option( 'solopmt_rcv_account' ),
 			'SOLOPMT_LANGUAGE'    => $this->get_option( 'solopmt_language' ),
-			'SOLOPMT_AMOUNT'      => round( $order->get_total(), 2 ),
+			'SOLOPMT_AMOUNT'      => wc_estonian_gateways_get_order_total( $order ),
 			'SOLOPMT_REF'         => $this->generate_ref_num( wc_estonian_gateways_get_order_id( $order ) ),
 			'SOLOPMT_DATE'        => 'EXPRESS',
 			'SOLOPMT_MSG'         => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),

@@ -88,13 +88,13 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'ver'          => '004',
 			'id'           => $this->get_option( 'merchant_id' ),
 			'ecuno'        => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
-			'eamount'      => ( round( $order->get_total(), 2 ) * 100 ),
 			'cur'          => get_woocommerce_currency(),
 			'datetime'     => date( 'YmdHis' ),
 			'feedBackUrl'  => $this->notify_url,
 			'delivery'     => 'S',
 			'lang'         => $lang_code,
 			'charEncoding' => 'utf-8'
+			'eamount'        => ( wc_estonian_gateways_get_order_total( $order ) * 100 ),
 		);
 
 		$key        = openssl_pkey_get_private( $this->get_option( 'private_key' ), $this->get_option( 'private_key_pass' ) );

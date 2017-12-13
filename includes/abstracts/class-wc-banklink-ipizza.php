@@ -230,7 +230,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			'VK_VERSION'  => '008',
 			'VK_SND_ID'   => $this->get_option( 'vk_snd_id' ),
 			'VK_STAMP'    => wc_estonian_gateways_get_order_id( $order ),
-			'VK_AMOUNT'   => round( $order->get_total(), 2 ),
+			'VK_AMOUNT'   => wc_estonian_gateways_get_order_total( $order ),
 			'VK_CURR'     => get_woocommerce_currency(),
 			'VK_REF'      => $this->generate_ref_num( wc_estonian_gateways_get_order_id( $order ) ),
 			'VK_MSG'      => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
