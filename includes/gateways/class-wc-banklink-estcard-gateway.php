@@ -84,17 +84,18 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 		// Set MAC fields
 		$mac_fields  = array(
-			'action'       => 'gaf',
-			'ver'          => '004',
-			'id'           => $this->get_option( 'merchant_id' ),
-			'ecuno'        => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
-			'cur'          => get_woocommerce_currency(),
-			'datetime'     => date( 'YmdHis' ),
-			'feedBackUrl'  => $this->notify_url,
-			'delivery'     => 'S',
-			'lang'         => $lang_code,
-			'charEncoding' => 'utf-8'
+			'action'         => 'gaf',
+			'ver'            => '004',
+			'id'             => $this->get_option( 'merchant_id' ),
+			'ecuno'          => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
 			'eamount'        => ( wc_estonian_gateways_get_order_total( $order ) * 100 ),
+			'additionalinfo' => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
+			'cur'            => get_woocommerce_currency(),
+			'datetime'       => date( 'YmdHis' ),
+			'feedBackUrl'    => $this->notify_url,
+			'delivery'       => 'S',
+			'lang'           => $lang_code,
+			'charEncoding'   => 'utf-8'
 		);
 
 		$key        = openssl_pkey_get_private( $this->get_option( 'private_key' ), $this->get_option( 'private_key_pass' ) );
