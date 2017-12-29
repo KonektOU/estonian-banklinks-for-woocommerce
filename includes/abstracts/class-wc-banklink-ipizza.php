@@ -230,7 +230,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			'VK_VERSION'  => '008',
 			'VK_SND_ID'   => $this->get_option( 'vk_snd_id' ),
 			'VK_STAMP'    => wc_estonian_gateways_get_order_id( $order ),
-			'VK_AMOUNT'   => round( $order->get_total(), 2 ),
+			'VK_AMOUNT'   => wc_estonian_gateways_get_order_total( $order ),
 			'VK_CURR'     => get_woocommerce_currency(),
 			'VK_REF'      => $this->generate_ref_num( wc_estonian_gateways_get_order_id( $order ) ),
 			'VK_MSG'      => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
@@ -238,6 +238,9 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			'VK_CANCEL'   => $this->notify_url,
 			'VK_DATETIME' => $datetime->format( DateTime::ISO8601 )
 		);
+
+		// Allow hooking into the data
+		$mac_fields = $this->hookable_transaction_data( $mac_fields, $order );
 
 		// Generate MAC string from the private key
 		$key        = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );

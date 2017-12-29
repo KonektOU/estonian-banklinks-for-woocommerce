@@ -2,8 +2,8 @@
 Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
-Tested up to: 4.8.2
-Stable tag: 1.3.3
+Tested up to: 4.9.1
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,11 @@ Code is maintained and developed at Github. Contributions and discussions are ve
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.3.4 =
+* Fix: PHP 7.1 rounding issue, which caused Maksekeskus transactions to fail
+* Forced Maksekeskus' transaction URL
+* Added filter `(woocommerce_{$gateway_id}_gateway_transaction_fields)` to hook into transaction data
 
 = 1.3.3 =
 * Renamed Krediidipank to Coop

@@ -83,19 +83,23 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$lang_code           = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
 
 		// Set MAC fields
-		$mac_fields  = array(
-			'action'       => 'gaf',
-			'ver'          => '004',
-			'id'           => $this->get_option( 'merchant_id' ),
-			'ecuno'        => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
-			'eamount'      => ( round( $order->get_total(), 2 ) * 100 ),
-			'cur'          => get_woocommerce_currency(),
-			'datetime'     => date( 'YmdHis' ),
-			'feedBackUrl'  => $this->notify_url,
-			'delivery'     => 'S',
-			'lang'         => $lang_code,
-			'charEncoding' => 'utf-8'
+		$mac_fields          = array(
+			'action'         => 'gaf',
+			'ver'            => '004',
+			'id'             => $this->get_option( 'merchant_id' ),
+			'ecuno'          => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
+			'eamount'        => ( wc_estonian_gateways_get_order_total( $order ) * 100 ),
+			'additionalinfo' => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
+			'cur'            => get_woocommerce_currency(),
+			'datetime'       => date( 'YmdHis' ),
+			'feedBackUrl'    => $this->notify_url,
+			'delivery'       => 'S',
+			'lang'           => $lang_code,
+			'charEncoding'   => 'utf-8'
 		);
+
+		// Allow hooking into the data
+		$mac_fields = $this->hookable_transaction_data( $mac_fields, $order );
 
 		$key        = openssl_pkey_get_private( $this->get_option( 'private_key' ), $this->get_option( 'private_key_pass' ) );
 		$signature  = '';

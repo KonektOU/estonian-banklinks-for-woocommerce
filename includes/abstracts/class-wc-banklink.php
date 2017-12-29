@@ -181,4 +181,15 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 			}
 		}
 	}
+
+	/**
+	 * Creates a filter for altering transaction data
+	 *
+	 * @param  array    $data  Transaction data
+	 * @param  WC_Order $order Order
+	 * @return array           Modified transaction data
+	 */
+	function hookable_transaction_data( $data, $order ) {
+		return apply_filters( 'woocommerce_' . $this->id . '_gateway_transaction_fields', $data, $order );
+	}
 }
