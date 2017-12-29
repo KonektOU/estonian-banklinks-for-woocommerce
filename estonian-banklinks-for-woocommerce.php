@@ -3,7 +3,7 @@
 	Plugin Name: Estonian Banklinks for WooCommerce
 	Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
 	Description: Extends WooCommerce with most commonly used Estonian banklinks.
-	Version: 1.3.3
+	Version: 1.3.4
 	Author: Konekt OÜ
 	Author URI: https://www.konekt.ee
 	License: GPLv2 or later
@@ -42,7 +42,12 @@ class Estonian_Gateways_For_WooCommerce {
 	 * Class constructor
 	 */
 	function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+		add_action( 'plugins_loaded',                   array( $this, 'plugins_loaded' ) );
+		add_action( 'wp_enqueue_scripts',               array( $this, 'wp_enqueue_scripts' ) );
+
+		// Allow WC template file search in this plugin
+		add_filter( 'woocommerce_locate_template',      array( $this, 'locate_template' ), 20, 3 );
+		add_filter( 'woocommerce_locate_core_template', array( $this, 'locate_template' ), 20, 3 );
 	}
 
 	/**
@@ -51,13 +56,23 @@ class Estonian_Gateways_For_WooCommerce {
 	 */
 	public function plugins_loaded() {
 		// Check if payment gateways are available
-		if ( ! $this->is_payment_gateway_class_available() ) return FALSE;
+		if ( $this->is_payment_gateway_class_available() ) {
+			add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateways' ) );
 
-		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateways' ) );
+			// Load functionality, translations
+			$this->includes();
+			$this->load_translations();
+		}
+	}
 
-		// Load functionality, translations
-		$this->includes();
-		$this->load_translations();
+	public function wp_enqueue_scripts() {
+		wp_register_style( 'wc-gateway-estonia-banklink', plugins_url( 'assets/css/style.css', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
+		wp_register_script( 'wc-gateway-estonia-banklink', plugins_url( 'assets/js/script.js', WC_ESTONIAN_GATEWAYS_MAIN_FILE ), array( 'jquery' ), '1.0', true );
+
+		if( function_exists( 'is_checkout' ) && is_checkout() ) {
+			wp_enqueue_style( 'wc-gateway-estonia-banklink' );
+			wp_enqueue_script( 'wc-gateway-estonia-banklink' );
+		}
 	}
 
 	/**
@@ -88,6 +103,7 @@ class Estonian_Gateways_For_WooCommerce {
 
 		// Other
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php';
+		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-maksekeskus-billing-api.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-estcard-gateway.php';
 	}
 
@@ -132,6 +148,7 @@ class Estonian_Gateways_For_WooCommerce {
 		$gateways[] = 'WC_Banklink_Nordea_Ipizza_Gateway';
 		$gateways[] = 'WC_Banklink_Liisi_Gateway';
 		$gateways[] = 'WC_Banklink_Maksekeskus_Redirect_Gateway';
+		$gateways[] = 'WC_Banklink_Maksekeskus_Billing_API';
 		$gateways[] = 'WC_Banklink_Estcard_Gateway';
 
 		return $gateways;
@@ -148,6 +165,43 @@ class Estonian_Gateways_For_WooCommerce {
 			self::$instance = new self;
 
 		return self::$instance;
+	}
+
+	/**
+	 * Locates the WooCommerce template files from this plugin directory
+	 *
+	 * @param  string $template      Already found template
+	 * @param  string $template_name Searchable template name
+	 * @param  string $template_path Template path
+	 * @return string                Search result for the template
+	 */
+	function locate_template( $template, $template_name, $template_path ) {
+		// Tmp holder
+		$_template = $template;
+
+		if ( ! $template_path ) $template_path = WC_TEMPLATE_PATH;
+
+		// Set our base path
+		$plugin_path = plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) . '/woocommerce/';
+
+		// Look within passed path within the theme - this is priority
+		$template = locate_template(
+			array(
+				trailingslashit( $template_path ) . $template_name,
+				$template_name
+			)
+		);
+
+		// Get the template from this plugin, if it exists
+		if ( ! $template && file_exists( $plugin_path . $template_name ) )
+			$template	= $plugin_path . $template_name;
+
+		// Use default template
+		if ( ! $template )
+			$template = $_template;
+
+		// Return what we found
+		return $template;
 	}
 }
 

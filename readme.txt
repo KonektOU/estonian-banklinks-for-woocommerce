@@ -18,7 +18,7 @@ This plugin consists of several Estonian banklinks:
 *   Maksekeskus (Redirect)
 *   Estcard (E-Commerce Payment Gateway)
 
-Code is maintained and developed at Github. Contributions and discussions are very welcome at [Github] (https://github.com/KonektOU/estonian-banklinks-for-woocommerce)
+Code is maintained and developed at Github. Contributions and discussions are very welcome at [Github](https://github.com/KonektOU/estonian-banklinks-for-woocommerce)
 
 
 == Installation ==
