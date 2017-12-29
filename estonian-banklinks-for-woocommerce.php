@@ -8,6 +8,8 @@
 	Author URI: https://www.konekt.ee
 	License: GPLv2 or later
 	Text Domain: wc-gateway-estonia-banklink
+	WC requires at least: 2.6
+	WC tested up to: 3.2.6
 */
 
 // Security check
