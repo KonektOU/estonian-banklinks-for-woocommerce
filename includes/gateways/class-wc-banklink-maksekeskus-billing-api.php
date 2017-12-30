@@ -65,7 +65,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 		}
 
 		// Methods transient name
-		$transient_name = sprintf( '%s_%s_available_methods', $this->id, $country );
+		$transient_name = sprintf( '%s_%s_available_methods', $this->id, $customer_country );
 
 		// Try cached data
 		if( $payment_methods = get_transient( $transient_name ) ) {
