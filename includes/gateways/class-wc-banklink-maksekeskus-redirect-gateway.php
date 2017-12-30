@@ -19,7 +19,8 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink_Maksekeskus {
 	function init_form_fields() {
 		parent::init_form_fields();
 
-		$this->form_fields['api_url']['default'] = 'https://payment.maksekeskus.ee/pay/1/signed.html';
+		// Replace default value and title for this gateway
+		$this->form_fields['api_url']['default'] = $this->get_option( 'destination_url', 'https://payment.maksekeskus.ee/pay/1/signed.html' );
 		$this->form_fields['api_url']['title']   = __( 'Destination URL', 'wc-gateway-estonia-banklink' );
 	}
 
