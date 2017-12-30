@@ -5,16 +5,31 @@
 }
 
 .banklink-maksekeskus-selection {
-	border: 5px solid transparent;
+	border: 2px solid transparent;
+	cursor: pointer;
 	display: inline-flex;
 	margin: 5px;
+	padding: 5px;
 	position: relative;
 
+	&:hover {
+		.banklink-maksekeskus-selection__logo {
+			opacity: 1;
+		}
+	}
+
 	&--active {
-		border-color: #f00;
+		background-color: rgba(0, 0, 0, 0.1);
+		border-color: rgba(0, 0, 0, 0.6);
+		border-radius: 3px;
+
+		.banklink-maksekeskus-selection__logo {
+			opacity: 1;
+		}
 	}
 
 	&__logo {
+		opacity: 0.5;
 		display: block !important;
 		float: none !important;
 		max-width: 100% !important;

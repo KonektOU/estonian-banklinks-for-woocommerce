@@ -3,7 +3,7 @@
 	Plugin Name: Estonian Banklinks for WooCommerce
 	Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
 	Description: Extends WooCommerce with most commonly used Estonian banklinks.
-	Version: 1.3.4
+	Version: 1.4
 	Author: Konekt OÜ
 	Author URI: https://www.konekt.ee
 	License: GPLv2 or later
@@ -67,13 +67,15 @@ class Estonian_Gateways_For_WooCommerce {
 		}
 	}
 
+	/**
+	 * Enqueue styles on checkout page
+	 * @return void
+	 */
 	public function wp_enqueue_scripts() {
 		wp_register_style( 'wc-gateway-estonia-banklink', plugins_url( 'assets/css/style.css', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
-		wp_register_script( 'wc-gateway-estonia-banklink', plugins_url( 'assets/js/script.js', WC_ESTONIAN_GATEWAYS_MAIN_FILE ), array( 'jquery' ), '1.0', true );
 
 		if( function_exists( 'is_checkout' ) && is_checkout() ) {
 			wp_enqueue_style( 'wc-gateway-estonia-banklink' );
-			wp_enqueue_script( 'wc-gateway-estonia-banklink' );
 		}
 	}
 
@@ -90,6 +92,7 @@ class Estonian_Gateways_For_WooCommerce {
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-ipizza.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-solo.php';
+		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/abstracts/class-wc-banklink-maksekeskus.php';
 
 		// IPizza
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-danske-gateway.php';
@@ -103,9 +106,11 @@ class Estonian_Gateways_For_WooCommerce {
 		// Solo
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-nordea-gateway.php';
 
-		// Other
+		// Maksekeskus
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-maksekeskus-redirect-gateway.php';
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-maksekeskus-billing-api.php';
+
+		// Other
 		require_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/gateways/class-wc-banklink-estcard-gateway.php';
 	}
 

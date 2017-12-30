@@ -1,12 +1,10 @@
 <?php
-class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
+class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 
-	public $api_url;
-
-	private $api_secret;
-
-	private $shop_id;
-
+	/**
+	 * Selected gateway method meta field name
+	 * @var string
+	 */
 	private $selected_method_meta_field;
 
 	/**
@@ -16,75 +14,25 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 		$this->id           = 'maksekeskus_billing_api';
 		$this->method_title = __( 'Maksekeskus', 'wc-gateway-estonia-banklink' );
 
+		// Set gateway method meta field name
 		$this->selected_method_meta_field = sprintf( '_%s_selected_method', $this->id );
 
 		parent::__construct();
 
+		// Only do the following when this gateway is enambled
 		if( $this->enabled !== 'no' ) {
 			add_action( 'template_redirect',                        array( $this, 'request_available_payment_methods' ), 0 );
 			add_action( 'woocommerce_checkout_update_order_meta',   array( $this, 'checkout_save_order_gateway_method_meta' ), 10, 2 );
 			add_action( 'woocommerce_checkout_update_order_review', array( $this, 'checkout_save_session_gateway_method' ), 10, 1 );
 			add_filter( 'woocommerce_before_template_part',         array( $this, 'checkout_maybe_save_session_gateway_method' ), 10, 1 );
 
-			$this->api_url    = $this->get_option( 'api_url' );
-			$this->api_secret = $this->get_option( 'api_secret' );
-			$this->shop_id    = $this->get_option( 'shop_id' );
+			// Enqueue some gateway specific javascript
+			if( is_checkout() ) {
+				wc_enqueue_js( $this->gateway_method_js() );
+			}
+
 			$this->has_fields = true;
 		}
-	}
-
-	/**
-	 * Set settings fields
-	 *
-	 * @return void
-	 */
-	function init_form_fields() {
-		parent::init_form_fields();
-
-		// Add fields
-		$this->form_fields = array_merge( $this->form_fields, array(
-			'currency'        => array(
-				'title'       => __( 'Currency', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'select',
-				'options'     => get_woocommerce_currencies(),
-				'default'     => get_woocommerce_currency()
-			),
-			'shop_id'         => array(
-				'title'       => __( 'Shop ID', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => '',
-				'description' => __( 'This will be provided by Maksekeskus', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
-			),
-			'api_url'         => array(
-				'title'       => __( 'API URL', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => 'https://api.maksekeskus.ee/v1/'
-			),
-			'api_secret'      => array(
-				'title'       => __( 'API secret', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'description' => __( 'This will be provided by Maksekeskus', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
-			),
-			'locale'          => array(
-				'title'       => __( 'Preferred locale', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'description' => __( 'RFC-2616 format locale', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE,
-				'default'     => $this->get_default_language()
-			),
-			'return_url'            => array(
-				'title'             => __( 'Return URL', 'wc-gateway-estonia-banklink' ),
-				'type'              => 'text',
-				'default'           => $this->notify_url,
-				'description'       => __( 'URL, where customer is redirected after the payment.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'          => TRUE,
-				'custom_attributes' => array(
-					'readonly' => 'readonly'
-				)
-			)
-		) );
 	}
 
 	public function get_api_url( $method, $query_data = array() ) {
@@ -92,13 +40,13 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 			$method = implode( '/', $method );
 		}
 
-		$api_request_url = trailingslashit( $this->api_url ) . $method;
+		$api_request_url = trailingslashit( $this->get_option( 'api_url' ) ) . $method;
 
 		return $query_data ? add_query_arg( $query_data, $api_request_url ) : $api_request_url;
 	}
 
 	public function request_available_payment_methods() {
-		if( $this->shop_id && $this->api_url && $this->api_secret ) {
+		if( $this->get_option( 'shop_id' ) && $this->get_option( 'api_url' ) && $this->get_option( 'api_secret' ) ) {
 			$customer_country = wc_estonian_gateways_get_customer_billing_country();
 
 			if ( ! $this->get_available_payment_methods( $customer_country ) || WP_DEBUG === TRUE ) {
@@ -109,7 +57,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 				$methods_request = $this->request_from_api( $this->get_api_url( 'methods', $methods_query ), 'GET' );
 
 				if( is_object( $methods_request ) && ! empty( $methods_request ) ) {
-					$this->set_available_payment_methods( $customer_country, $methods_request );
+					$this->set_available_payment_methods( $customer_country, $methods_request->banklinks );
 				}
 			}
 		}
@@ -135,17 +83,22 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 		}
 
 		if( $methods ) {
-			foreach( $methods as $method_group => &$gateways ) {
-				foreach( $gateways as $gateway ) {
-					$gateway->logo = $this->get_maksekeskus_gateway_logo_url( $gateway->name );
+			foreach( $methods as $key => $method ) {
+				$methods[$key]->logo = $this->get_maksekeskus_gateway_logo_url( $method->name );
+			}
+
+			$current_method = null;
+
+			if( $selected_method = WC()->session->get( $this->selected_method_meta_field ) ) {
+				foreach( $methods as $method ) {
+					if( $method->name == $selected_method ) {
+						$current_method = $selected_method;
+					}
 				}
 			}
 
-			if( $selected_method = WC()->session->get( $this->selected_method_meta_field ) ) {
-				$current_method = $selected_method;
-			}
-			else {
-				$current_method = reset( $methods->banklinks )->name;
+			if( ! $current_method ) {
+				$current_method = reset( $methods )->name;
 			}
 
 			$template_data = apply_filters( 'woocommerce_' . $this->id . '_gateway_template_data', array(
@@ -161,12 +114,17 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 		return sprintf( 'https://static.maksekeskus.ee/img/channel/lnd/%s.png', $gateway );
 	}
 
-	private function request_from_api( $url, $method = 'POST' ) {
+	private function request_from_api( $url, $method = 'POST', $body = array() ) {
 		$args = array(
 			'headers' => array(
-				'Authorization' => sprintf( 'Basic %s', base64_encode( sprintf( '%s:%s', $this->shop_id, $this->api_secret ) ) )
+				'Authorization' => sprintf( 'Basic %s', base64_encode( sprintf( '%s:%s', $this->get_option( 'shop_id' ), $this->get_option( 'api_secret' ) ) ) ),
+				'Content-Type'  => 'application/json'
 			)
 		);
+
+		if( ! empty( $body ) ) {
+			$args['body'] = json_encode( $body );
+		}
 
 		if( $method == 'GET' ) {
 			$request = wp_remote_get( $url, $args );
@@ -175,10 +133,13 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 			$request = wp_remote_post( $url, $args );
 		}
 
-		if( wp_remote_retrieve_response_code( $request ) == 200 ) {
+		if( wp_remote_retrieve_response_code( $request ) == 200 || ( $method == 'POST' && in_array( wp_remote_retrieve_response_code( $request ), array( 200, 201 ) ) ) ) {
 			$request_response = json_decode( wp_remote_retrieve_body( $request ) );
 
 			return $request_response;
+		}
+		else {
+			$this->debug( $request, 'emergency' );
 		}
 
 		return null;
@@ -195,6 +156,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 	function checkout_save_order_gateway_method_meta( $order_id, $posted ) {
 		if( isset( $_POST['banklink_gateway_maksekeskus_method'] ) ) {
 			update_post_meta( $order_id, $this->selected_method_meta_field, $_POST['banklink_gateway_maksekeskus_method'] );
+			WC()->session->set( $this->selected_method_meta_field, $_POST['banklink_gateway_maksekeskus_method'] );
 		}
 	}
 
@@ -229,14 +191,78 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink {
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
-	function generate_submit_form( $order_id ) {
+	function output_gateway_redirection_form( $order_id ) {
 		// Get the order
-		$order            = wc_get_order( $order_id );
+		$order              = wc_get_order( $order_id );
 
-		$transaction_data = array(
+		// Return URL
+		$return_url = array(
+			'url'    => $this->get_option( 'return_url' ),
+			'method' => 'POST'
+		);
+
+		$transaction_data   = array(
 			'transaction' => array(
-				'amount' => number_format( round( $order->get_total(), 2 ), 2, '.', '' )
+				'amount'          => wc_estonian_gateways_get_order_total( $order ),
+				'currency'        => wc_estonian_gateways_get_order_currency( $order ),
+				'reference'       => wc_estonian_gateways_get_order_id( $order ),
+				'transaction_url' => $this->get_transaction_urls()
+			),
+			'customer'    => array(
+				'email'     => wc_estonian_gateways_get_order_billing_email( $order ),
+				'country'   => wc_estonian_gateways_get_customer_billing_country(),
+				'locale'    => $this->get_option( 'locale' ),
+				'ip'        => wc_estonian_gateways_get_customer_ip_address( $order )
 			)
 		);
+
+		$transaction_data    = $this->hookable_transaction_data( $transaction_data, $order );
+		$transaction_request = $this->request_from_api( $this->get_api_url( 'transactions' ), 'POST', $transaction_data );
+
+		if( $transaction_request ) {
+			// Set transaction ID
+			$order->set_transaction_id( $transaction_request->id );
+			$order->save();
+
+			// Out method
+			$selected_method     = get_post_meta( $order_id, $this->selected_method_meta_field, true );
+			$selected_method_url = null;
+
+			// Find correct URL to redirect to
+			foreach( $transaction_request->payment_methods->banklinks as $method ) {
+				if( $method->name == $selected_method ) {
+					$selected_method_url = $method->url;
+				}
+			}
+
+			return $this->get_redirect_form( $selected_method_url );
+		}
+	}
+
+	function get_redirect_form( $url, $fields = array() ) {
+		// Add form
+		$form = sprintf( '<form action="%s" method="get" id="banklink_%s_submit_form"><button class="button submit">%s</button></form>', esc_attr( $selected_method_url ), $this->id, __( 'Pay', 'wc-gateway-estonia-banklink' ) );
+
+		// Add inline JS
+		wc_enqueue_js( sprintf( 'window.location = "%s";', $selected_method_url ) );
+
+		return $form;
+	}
+
+	function gateway_method_js() {
+		ob_start();
+		?>
+		$( 'body' )
+			.on( 'click', '.banklink-maksekeskus-selection', function(event) {
+				event.preventDefault();
+
+				var $this = $( this );
+
+				$this.siblings().removeClass( 'banklink-maksekeskus-selection--active' );
+				$this.addClass( 'banklink-maksekeskus-selection--active' );
+				$this.siblings( '.banklink-maksekeskus-selection__value' ).val( $this.data( 'name' ) );
+			});
+		<?php
+		return ob_get_clean();
 	}
 }
