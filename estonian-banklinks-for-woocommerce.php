@@ -13,7 +13,9 @@
 */
 
 // Security check
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Main file constant
@@ -179,7 +181,9 @@ class Estonian_Gateways_For_WooCommerce {
 		// Tmp holder
 		$_template = $template;
 
-		if ( ! $template_path ) $template_path = WC_TEMPLATE_PATH;
+		if ( ! $template_path ) {
+			$template_path = WC_TEMPLATE_PATH;
+		}
 
 		// Set our base path
 		$plugin_path = plugin_dir_path( WC_ESTONIAN_GATEWAYS_MAIN_FILE ) . '/woocommerce/';
@@ -193,12 +197,14 @@ class Estonian_Gateways_For_WooCommerce {
 		);
 
 		// Get the template from this plugin, if it exists
-		if ( ! $template && file_exists( $plugin_path . $template_name ) )
+		if ( ! $template && file_exists( $plugin_path . $template_name ) ) {
 			$template	= $plugin_path . $template_name;
+		}
 
 		// Use default template
-		if ( ! $template )
+		if ( ! $template ) {
 			$template = $_template;
+		}
 
 		// Return what we found
 		return $template;

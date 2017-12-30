@@ -62,7 +62,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
-	function generate_submit_form( $order_id ) {
+	function output_gateway_redirection_form( $order_id ) {
 		// Get the order
 		$order = wc_get_order( $order_id );
 
@@ -112,28 +112,11 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			die( "Unable to generate signature" );
 		}
 
+		// Add signature
 		$mac_fields['mac'] = bin2hex( $signature );
 
-		// Start form
-		$post = '<form action="'. esc_attr( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
-
-		// Add other data as hidden fields
-		foreach ( $mac_fields as $name => $value ) {
-			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'">';
-		}
-
-		// Show "Pay" button and end the form
-		$post .= '<input type="submit" name="send_banklink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
-		$post .= "</form>";
-
-		// Debug output
-		$this->debug( $mac_fields );
-
-		// Add inline JS
-		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
-
 		// Return form
-		return $post;
+		return $this->get_redirect_form( $this->get_option( 'destination_url' ), $mac_fields );
 	}
 
 	/**

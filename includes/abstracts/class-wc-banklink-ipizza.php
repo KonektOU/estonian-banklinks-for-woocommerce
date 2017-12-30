@@ -217,7 +217,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
-	function generate_submit_form( $order_id ) {
+	function output_gateway_redirection_form( $order_id ) {
 		// Get the order
 		$order      = wc_get_order( $order_id );
 
@@ -257,6 +257,20 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Encode signature
 		$mac_fields['VK_MAC'] = base64_encode( $signature );
 
+		// Extra fields
+		$mac_fields['VK_LANG']     = $this->get_current_language();
+		$mac_fields['VK_ENCODING'] = $this->encoding;
+
+		// Output form
+		return $this->get_redirect_form( $this->get_option( 'vk_dest' ), $mac_fields );
+	}
+
+	/**
+	 * Get compatible language code, taking account WPML and qTranslate
+	 *
+	 * @return string Language code
+	 */
+	function get_current_language() {
 		// language support: informs bank of preferred UI language
 		$lang = $this->get_option( 'vk_lang' );
 
@@ -267,30 +281,6 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			$lang = qtrans_getLanguage(); // qtranslate
 		}
 
-		$mac_fields['VK_LANG'] = isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : $this->lang_codes[0];
-
-		// Start form
-		$post = '<form action="'. esc_attr( $this->get_option( 'vk_dest' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
-
-		// Add fields to form inputs
-		foreach ( $mac_fields as $name => $value ) {
-			$post .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'" />';
-		}
-
-		// Add encoding
-		$post .= '<input type="hidden" name="VK_ENCODING" value="' . $this->encoding . '" />';
-
-		// Show "Pay" button and end the form
-		$post .= '<input type="submit" name="send_banklink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'">';
-		$post .= "</form>";
-
-		// Debug output
-		$this->debug( $mac_fields );
-
-		// Add inline JS
-		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
-
-		// Output form
-		return $post;
+		return isset( $this->lang_codes[ $lang ] ) ? $this->lang_codes[ $lang ] : reset( $this->lang_codes );
 	}
 }

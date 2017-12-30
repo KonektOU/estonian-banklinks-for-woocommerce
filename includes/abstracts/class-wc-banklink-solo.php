@@ -77,7 +77,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
-	function generate_submit_form( $order_id ) {
+	function output_gateway_redirection_form( $order_id ) {
 		// Get the order
 		$order			= wc_get_order( $order_id );
 
@@ -106,26 +106,8 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		// Generate MAC string
 		$mac_fields['SOLOPMT_MAC'] = $this->generate_mac_string( $mac_fields );
 
-		// Start form
-		$form = '<form action="'. esc_attr( $this->get_option( 'solopmt_dest' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
-
-		// Add fields to form inputs
-		foreach ( $mac_fields as $name => $value ) {
-			$form .= '<input type="hidden" name="'. $name .'" value="'. htmlspecialchars( $value ) .'" />';
-		}
-
-		// Show "Pay" button and end the form
-		$form .= '<input type="submit" name="send_banlink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'">';
-		$form .= "</form>";
-
-		// Debug output
-		$this->debug( $mac_fields );
-
-		// Add inline JS
-		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
-
 		// Output form
-		return $form;
+		return $this->get_redirect_form( $this->get_option( 'solopmt_dest' ), $mac_fields );
 	}
 
 	/**

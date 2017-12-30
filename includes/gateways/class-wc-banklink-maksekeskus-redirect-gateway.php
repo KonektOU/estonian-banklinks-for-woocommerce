@@ -73,15 +73,9 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 	 * @param  integer $order_id Order ID
 	 * @return string            HTML form
 	 */
-	function generate_submit_form( $order_id ) {
+	function output_gateway_redirection_form( $order_id ) {
 		// Get the order
 		$order       = wc_get_order( $order_id );
-
-		// Return URL
-		$return_url = array(
-			'url'    => $this->get_option( 'return_url' ),
-			'method' => 'POST'
-		);
 
 		// Request
 		$request     = array(
@@ -90,11 +84,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			'reference'       => wc_estonian_gateways_get_order_id( $order ),
 			'country'         => wc_estonian_gateways_get_customer_billing_country( $order ),
 			'locale'          => $this->get_option( 'locale' ),
-			'transaction_url' => array(
-				'return_url'       => $return_url,
-				'cancel_url'       => $return_url,
-				'notification_url' => $return_url
-			)
+			'transaction_url' => $this->get_transaction_urls()
 		);
 
 		// Allow hooking into the data
@@ -109,27 +99,7 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 			'mac'  => $mac_code
 		);
 
-		// Start form
-		$post = '<form action="'. htmlspecialchars( $this->get_option( 'destination_url' ) ) .'" method="post" id="banklink_'. $this->id .'_submit_form">';
-
-		// Add other data as hidden fields
-		foreach ( $form_fields as $name => $value ) {
-			$post .= '<input type="hidden" name="'. esc_attr( $name ) .'" value="'. esc_attr( $value ) .'">';
-		}
-
-		// Show "Pay" button and end the form
-		$post .= '<input type="submit" name="send_banklink" class="button" value="'. __( 'Pay', 'wc-gateway-estonia-banklink' ) .'"/>';
-		$post .= "</form>";
-
-		// Debug output
-		$this->debug( $form_fields );
-
-		// Add inline JS
-		wc_enqueue_js( 'jQuery( "#banklink_'. $this->id .'_submit_form" ).submit();' );
-
 		// Output form
-		return $post;
-	}
 
 	/**
 	 * Generate response/request signature of MAC fields
@@ -287,5 +257,6 @@ class WC_Banklink_Maksekeskus_Redirect_Gateway extends WC_Banklink {
 		}
 
 		return $result;
+		return $this->get_redirect_form( $this->get_option( 'api_url' ), $form_fields );
 	}
 }

@@ -130,7 +130,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 		echo apply_filters( 'the_content', sprintf( __( 'Thank you for your order, please click the button below to pay with %s in case automatic redirection does not work.', 'wc-gateway-estonia-banklink' ), $this->get_title() ) );
 
 		// Generate the form
-		echo $this->generate_submit_form( $order_id );
+		echo $this->output_gateway_redirection_form( $order_id );
 	}
 
 	/**
@@ -191,5 +191,34 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 */
 	function hookable_transaction_data( $data, $order ) {
 		return apply_filters( 'woocommerce_' . $this->id . '_gateway_transaction_fields', $data, $order );
+	}
+
+	/**
+	 * Generate form that redirects users to bank
+	 *
+	 * @param  string $url    URL to redirect
+	 * @param  array  $fields Fields to include as hidden inputs
+	 * @return string         HTML for the form
+	 */
+	function get_redirect_form( $url, $fields ) {
+		// Start form
+		$form = sprintf( '<form action="%s" method="post" id="banklink_%s_submit_form">', esc_attr( $url ), $this->id );
+
+		// Add fields to form inputs
+		foreach ( $fields as $name => $value ) {
+			$form .= sprintf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $name ), htmlspecialchars( $value ) );
+		}
+
+		// Show "Pay" button and end the form
+		$form .= sprintf( '<input type="submit" name="send_banklink" class="button" value="%s">', __( 'Pay', 'wc-gateway-estonia-banklink' ) );
+		$form .= "</form>";
+
+		// Debug output
+		$this->debug( $fields );
+
+		// Add inline JS
+		wc_enqueue_js( sprintf( 'jQuery( "#banklink_%s_submit_form" ).submit();', $this->id ) );
+
+		return apply_filters( sprintf( 'woocommerce_%s_gateway_redirect_form_html', $this->id ), $form, $fields );
 	}
 }
