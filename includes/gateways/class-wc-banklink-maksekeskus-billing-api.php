@@ -268,10 +268,10 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 	 */
 	function get_redirect_form( $url, $fields = array() ) {
 		// Add form
-		$form = sprintf( '<form action="%s" method="get" id="banklink_%s_submit_form"><button class="button submit">%s</button></form>', esc_attr( $selected_method_url ), $this->id, __( 'Pay', 'wc-gateway-estonia-banklink' ) );
+		$form = sprintf( '<form action="%s" method="get" id="banklink_%s_submit_form"><button class="button submit">%s</button></form>', esc_attr( $url ), $this->id, __( 'Pay', 'wc-gateway-estonia-banklink' ) );
 
 		// Add inline JS
-		wc_enqueue_js( sprintf( 'window.location = "%s";', $selected_method_url ) );
+		wc_enqueue_js( sprintf( 'window.location = "%s";', $url ) );
 
 		return $form;
 	}
