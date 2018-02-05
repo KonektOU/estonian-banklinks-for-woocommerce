@@ -12,7 +12,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 	 */
 	function __construct() {
 		$this->id           = 'maksekeskus_billing_api';
-		$this->method_title = __( 'Maksekeskus', 'wc-gateway-estonia-banklink' );
+		$this->method_title = __( 'Maksekeskus API (BETA)', 'wc-gateway-estonia-banklink' );
 
 		// Set gateway method meta field name
 		$this->selected_method_meta_field = sprintf( '_%s_selected_method', $this->id );
