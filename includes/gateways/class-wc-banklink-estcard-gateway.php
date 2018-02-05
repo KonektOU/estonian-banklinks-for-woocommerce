@@ -88,8 +88,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			'ver'            => '004',
 			'id'             => $this->get_option( 'merchant_id' ),
 			'ecuno'          => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
-			'eamount'        => ( wc_estonian_gateways_get_order_total( $order ) * 100 ),
-			'additionalinfo' => sprintf( __( 'Order nr. %s payment', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
+			'eamount'        => sprintf( '%012d',  wc_estonian_gateways_get_order_total( $order ) * 100 ),
+			'additionalinfo' => sprintf( __( 'Order nr: %s', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
 			'cur'            => get_woocommerce_currency(),
 			'datetime'       => date( 'YmdHis' ),
 			'feedBackUrl'    => $this->notify_url,
@@ -129,14 +129,15 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$data = FALSE;
 
 		if ( $fields['action'] == 'gaf' ) {
-			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['delivery'],    1,   ' ', STR_PAD_RIGHT, 'utf-8' );
+			$data = $this->mb_str_pad( $fields['ver'],            3,   '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['id'],             10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['ecuno'],          12,  '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['eamount'],        12,  '0', STR_PAD_LEFT,  'utf-8' ) .
+			        $this->mb_str_pad( $fields['cur'],            3,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['datetime'],       14,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['feedBackUrl'],    128, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['delivery'],       1,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			        $this->mb_str_pad( $fields['additionalinfo'], 128,   ' ', STR_PAD_RIGHT, 'utf-8' );
 		}
 		elseif ( $fields['action'] == 'afb' ) {
 			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
