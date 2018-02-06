@@ -1,16 +1,16 @@
 <?php
-/*
-	Plugin Name: Estonian Banklinks for WooCommerce
-	Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
-	Description: Extends WooCommerce with most commonly used Estonian banklinks.
-	Version: 1.4
-	Author: Konekt OÜ
-	Author URI: https://www.konekt.ee
-	License: GPLv2 or later
-	Text Domain: wc-gateway-estonia-banklink
-	WC requires at least: 2.6
-	WC tested up to: 3.2.6
-*/
+/**
+ * Plugin Name: Estonian Banklinks for WooCommerce
+ * Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
+ * Description: Extends WooCommerce with most commonly used Estonian banklinks.
+ * Version: 1.4
+ * Author: Konekt OÜ
+ * Author URI: https://www.konekt.ee
+ * License: GPLv2 or later
+ * Text Domain: wc-gateway-estonia-banklink
+ * WC requires at least: 2.6
+ * WC tested up to: 3.2.6
+ */
 
 // Security check
 if ( ! defined( 'ABSPATH' ) ) {

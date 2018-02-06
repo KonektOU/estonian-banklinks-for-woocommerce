@@ -2,8 +2,8 @@
 Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
-Tested up to: 4.9.1
-Stable tag: 1.3.4
+Tested up to: 4.9.3
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ This plugin consists of several Estonian banklinks:
 
 *   Danske, Coop, LHV, SEB, Swedbank, Luminor, Liisi ID (iPizza protocol)
 *   Luminor (Solo protocol)
-*   Maksekeskus (Redirect)
+*   Maksekeskus (Redirect), Maksekeskus Billing API (BETA)
 *   Estcard (E-Commerce Payment Gateway)
 
 Code is maintained and developed at Github. Contributions and discussions are very welcome at [Github](https://github.com/KonektOU/estonian-banklinks-for-woocommerce)
@@ -35,6 +35,11 @@ Code is maintained and developed at Github. Contributions and discussions are ve
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.4 =
+* Added Maksekeskus Billing API gateway (beta) for better and simpler checkout with Maksekeskus
+* Fix: Incorrectly formatted additionalinfo field for Estcard caused issues and was not used in MAC data
+* Cleaned up code
 
 = 1.3.4 =
 * Fix: PHP 7.1 rounding issue, which caused Maksekeskus transactions to fail
