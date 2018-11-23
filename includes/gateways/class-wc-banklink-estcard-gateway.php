@@ -222,6 +222,12 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			else {
 				// Set status to failed
 				$order->update_status( 'failed', sprintf( '%s: %s', $this->get_title(), __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) ) );
+
+				// response code can be used to customize message output in front-end
+				// 000 is success, all others mean fail; 017 means "cancelled by client"
+				if ( isset( $response['respcode'] ) ) {
+					update_post_meta( $order_id, '_estcard_respcode', $response['respcode'] );
+				}
 			}
 		}
 
