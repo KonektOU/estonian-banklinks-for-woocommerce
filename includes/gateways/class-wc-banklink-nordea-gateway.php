@@ -1,5 +1,6 @@
 <?php
 class WC_Banklink_Nordea_Gateway extends WC_Banklink_Solo {
+
 	/**
 	 * WC_Banklink_Nordea_Gateway
 	 */

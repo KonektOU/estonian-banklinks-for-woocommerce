@@ -1,5 +1,6 @@
 <?php
 class WC_Banklink_Krediidipank_Gateway extends WC_Banklink_Ipizza {
+
 	/**
 	 * WC_Banklink_Krediidipank_Gateway
 	 */

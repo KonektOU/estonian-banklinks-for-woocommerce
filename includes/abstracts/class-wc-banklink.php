@@ -1,13 +1,14 @@
 <?php
 abstract class WC_Banklink extends WC_Payment_Gateway {
+
 	/**
 	 * WC_Banklink
 	 */
 	function __construct() {
 		// Get icon and set notification URL
-		$this->icon        = $this->get_option( 'logo', plugins_url( 'assets/img/'. $this->id .'.png', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
-		$this->has_fields  = FALSE;
-		$this->notify_url  = WC()->api_request_url( get_class( $this ) );
+		$this->icon       = $this->get_option( 'logo', plugins_url( 'assets/img/' . $this->id . '.png', WC_ESTONIAN_GATEWAYS_MAIN_FILE ) );
+		$this->has_fields = false;
+		$this->notify_url = WC()->api_request_url( get_class( $this ) );
 
 		// Get the settings
 		$this->title       = $this->get_option( 'title', $this->method_title );
@@ -19,12 +20,12 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Payment listener/API hook
-		add_action( 'woocommerce_api_' . strtolower( esc_attr( get_class( $this ) ) ),      array( $this, 'check_bank_response' ) );
+		add_action( 'woocommerce_api_' . strtolower( esc_attr( get_class( $this ) ) ), array( $this, 'check_bank_response' ) );
 
 		// Actions
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id,             array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_receipt_' . $this->id,                                     array( $this, 'receipt_page' ) );
-		add_action( 'woocommerce_'. $this->id .'_check_response',                           array( $this, 'validate_bank_response' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_' . $this->id . '_check_response', array( $this, 'validate_bank_response' ) );
 	}
 
 	/**
@@ -35,44 +36,44 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	function init_form_fields() {
 		// Set fields
 		$this->form_fields = array(
-			'enabled'         => array(
-				'title'       => __( 'Enable banklink', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'checkbox',
-				'default'     => 'no',
-				'label'       => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
+			'enabled'     => array(
+				'title'   => __( 'Enable banklink', 'wc-gateway-estonia-banklink' ),
+				'type'    => 'checkbox',
+				'default' => 'no',
+				'label'   => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' ),
 			),
-			'title'           => array(
+			'title'       => array(
 				'title'       => __( 'Title', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which user sees during checkout.', 'wc-gateway-estonia-banklink' ),
 				'default'     => $this->get_title(),
-				'desc_tip'    => TRUE
+				'desc_tip'    => true,
 			),
-			'description'     => array(
+			'description' => array(
 				'title'       => __( 'Customer message', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'textarea',
 				'default'     => '',
 				'description' => __( 'This will be visible when user selects this payment gateway during checkout.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
+				'desc_tip'    => true,
 			),
-			'logo' => array(
+			'logo'        => array(
 				'title'       => __( 'Logo', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'text',
 				'default'     => $this->icon,
 				'description' => __( 'Enter full URL to set a custom logo. You could upload the image to your media library first.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
+				'desc_tip'    => true,
 			),
-			'countries' => array(
+			'countries'   => array(
 				'title'       => __( 'Country availability', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'multiselect',
 				'class'       => 'wc-enhanced-select',
 				'options'     => array_merge(
-						array( 'all' => __( 'All countries', 'wc-gateway-estonia-banklink' ) ),
-						WC()->countries->get_countries()
-					),
+					array( 'all' => __( 'All countries', 'wc-gateway-estonia-banklink' ) ),
+					WC()->countries->get_countries()
+				),
 				'default'     => array( 'all' ),
 				'description' => __( 'Specify countries where this method should be available. Select only "all countries" to sell everywhere.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
+				'desc_tip'    => true,
 			),
 		);
 	}
@@ -84,16 +85,19 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return string        Reference number
 	 */
 	function generate_ref_num( $stamp ) {
-		$chcs = array(7, 3, 1);
+		$chcs = array( 7, 3, 1 );
 		$sum  = 0;
 		$pos  = 0;
 
 		for ( $i = 0; $i < strlen( $stamp ); $i++ ) {
-			$x   = (int) ( substr( $stamp, strlen( $stamp ) - 1 - $i, 1) );
+			$x   = (int) ( substr( $stamp, strlen( $stamp ) - 1 - $i, 1 ) );
 			$sum = $sum + ( $x * $chcs[ $pos ] );
 
-			if ( $pos == 2 ) $pos = 0;
-			else $pos = $pos + 1;
+			if ( $pos == 2 ) {
+				$pos = 0;
+			} else {
+				$pos = $pos + 1;
+			}
 		}
 
 		$x   = 10 - ( $sum % 10 );
@@ -114,8 +118,8 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 
 		// Redirect
 		return array(
-			'result'	=> 'success',
-			'redirect'	=> $order->get_checkout_payment_url( true )
+			'result'   => 'success',
+			'redirect' => $order->get_checkout_payment_url( true ),
 		);
 	}
 
@@ -139,7 +143,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	function is_available() {
-		if( WC()->customer == null ) {
+		if ( WC()->customer == null ) {
 			return false;
 		}
 
@@ -168,14 +172,13 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	function debug( $data, $level = 'debug' ) {
-		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG === TRUE ) {
-			$log_data = is_array( $data ) || is_object( $data ) ? print_r( $data, TRUE ) : var_export( $data, true );
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG === true ) {
+			$log_data = is_array( $data ) || is_object( $data ) ? print_r( $data, true ) : var_export( $data, true );
 
-			if( function_exists( 'wc_get_logger' ) ) {
+			if ( function_exists( 'wc_get_logger' ) ) {
 				$logger = wc_get_logger();
 				$logger->log( $level, $log_data, array( 'source' => $this->id ) );
-			}
-			else {
+			} else {
 				$logger = new WC_Logger();
 				$logger->add( $this->id, $log_data );
 			}
@@ -211,7 +214,7 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 
 		// Show "Pay" button and end the form
 		$form .= sprintf( '<input type="submit" name="send_banklink" class="button" value="%s">', __( 'Pay', 'wc-gateway-estonia-banklink' ) );
-		$form .= "</form>";
+		$form .= '</form>';
 
 		// Debug output
 		$this->debug( $fields );

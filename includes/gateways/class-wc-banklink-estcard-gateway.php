@@ -1,6 +1,7 @@
 <?php
 class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
+
 	/**
 	 * WC_Banklink_Estcard_Gateway
 	 */
@@ -20,40 +21,43 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		parent::init_form_fields();
 
 		// Set fields
-		$this->form_fields = array_merge( $this->form_fields, array(
-			'destination_url' => array(
-				'title'       => __( 'Destination URL', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => ''
-			),
-			'merchant_id'     => array(
-				'title'       => __( 'Account ID', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => ''
-			),
-			'private_key'     => array(
-				'title'       => __( 'Your Private Key', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'textarea',
-				'default'     => ''
-			),
-			'private_key_pass'=> array(
-				'title'       => __( 'Private Key Password', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => ''
-			),
-			'public_key'      => array(
-				'title'       => __( 'Bank`s Public Key', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'textarea',
-				'default'     => ''
-			),
-			'lang'            => array(
-				'title'       => __( 'Default language', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => $this->get_default_language(),
-				'description' => __( 'Default UI language locale sent to the bank. Currently supported: et, en, fi, de. Defaults to et.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
+		$this->form_fields = array_merge(
+			$this->form_fields,
+			array(
+				'destination_url'  => array(
+					'title'   => __( 'Destination URL', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'text',
+					'default' => '',
+				),
+				'merchant_id'      => array(
+					'title'   => __( 'Account ID', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'text',
+					'default' => '',
+				),
+				'private_key'      => array(
+					'title'   => __( 'Your Private Key', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'textarea',
+					'default' => '',
+				),
+				'private_key_pass' => array(
+					'title'   => __( 'Private Key Password', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'text',
+					'default' => '',
+				),
+				'public_key'       => array(
+					'title'   => __( 'Bank`s Public Key', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'textarea',
+					'default' => '',
+				),
+				'lang'             => array(
+					'title'       => __( 'Default language', 'wc-gateway-estonia-banklink' ),
+					'type'        => 'text',
+					'default'     => $this->get_default_language(),
+					'description' => __( 'Default UI language locale sent to the bank. Currently supported: et, en, fi, de. Defaults to et.', 'wc-gateway-estonia-banklink' ),
+					'desc_tip'    => true,
+				),
 			)
-		) );
+		);
 	}
 
 	/**
@@ -67,12 +71,11 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$order = wc_get_order( $order_id );
 
 		// Get language code accepted by Nets Estonia
-		$lang  = $this->get_option( 'lang' );
+		$lang = $this->get_option( 'lang' );
 
 		if ( defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$lang = ICL_LANGUAGE_CODE; // WPML
-		}
-		elseif ( function_exists( 'qtrans_getLanguage' ) ) {
+		} elseif ( function_exists( 'qtrans_getLanguage' ) ) {
 			$lang = qtrans_getLanguage(); // qtranslate
 		}
 
@@ -80,22 +83,22 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		$accepted_lang_codes = array( 'et', 'en', 'fi', 'de' );
 
 		// Current language code
-		$lang_code           = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
+		$lang_code = in_array( $lang, $accepted_lang_codes ) ? $lang : 'en';
 
 		// Set MAC fields
-		$mac_fields          = array(
+		$mac_fields = array(
 			'action'         => 'gaf',
 			'ver'            => '004',
 			'id'             => $this->get_option( 'merchant_id' ),
 			'ecuno'          => $this->generate_unique_ecuno( wc_estonian_gateways_get_order_id( $order ) ),
-			'eamount'        => sprintf( '%012d',  wc_estonian_gateways_get_order_total( $order ) * 100 ),
+			'eamount'        => sprintf( '%012d', wc_estonian_gateways_get_order_total( $order ) * 100 ),
 			'additionalinfo' => sprintf( __( 'Order nr: %s', 'wc-gateway-estonia-banklink' ), wc_estonian_gateways_get_order_id( $order ) ),
 			'cur'            => get_woocommerce_currency(),
 			'datetime'       => date( 'YmdHis' ),
 			'feedBackUrl'    => $this->notify_url,
 			'delivery'       => 'S',
 			'lang'           => $lang_code,
-			'charEncoding'   => 'utf-8'
+			'charEncoding'   => 'utf-8',
 		);
 
 		// Allow hooking into the data
@@ -109,7 +112,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		if ( ! openssl_sign( $mac_string, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
 			$this->debug( 'Unable to generate signature', 'emergency' );
 
-			die( "Unable to generate signature" );
+			die( 'Unable to generate signature' );
 		}
 
 		// Add signature
@@ -122,34 +125,33 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	/**
 	 * Generates MAC string as needed according to the service number
 	 *
-	 * @param  array  $macFields MAC fields
+	 * @param  array $macFields MAC fields
 	 * @return string            MAC string
 	 */
 	function generate_mac_string( $fields ) {
-		$data = FALSE;
+		$data = false;
 
 		if ( $fields['action'] == 'gaf' ) {
-			$data = $this->mb_str_pad( $fields['ver'],            3,   '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['id'],             10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['ecuno'],          12,  '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['eamount'],        12,  '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['cur'],            3,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['datetime'],       14,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['feedBackUrl'],    128, ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['delivery'],       1,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['additionalinfo'], 128,   ' ', STR_PAD_RIGHT, 'utf-8' );
-		}
-		elseif ( $fields['action'] == 'afb' ) {
-			$data = $this->mb_str_pad( $fields['ver'],         3,   '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['id'],          10,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['ecuno'],       12,  '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['receipt_no'],  6,   '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['eamount'],     12,  '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['cur'],         3,   ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['respcode'],    3,   '0', STR_PAD_LEFT,  'utf-8' ) .
-			        $this->mb_str_pad( $fields['datetime'],    14,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['msgdata'],     40,  ' ', STR_PAD_RIGHT, 'utf-8' ) .
-			        $this->mb_str_pad( $fields['actiontext'],  40,  ' ', STR_PAD_RIGHT, 'utf-8' );
+			$data = $this->mb_str_pad( $fields['ver'], 3, '0', STR_PAD_LEFT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['id'], 10, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['ecuno'], 12, '0', STR_PAD_LEFT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['eamount'], 12, '0', STR_PAD_LEFT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['cur'], 3, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['datetime'], 14, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['feedBackUrl'], 128, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['delivery'], 1, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+			  $this->mb_str_pad( $fields['additionalinfo'], 128, ' ', STR_PAD_RIGHT, 'utf-8' );
+		} elseif ( $fields['action'] == 'afb' ) {
+			$data = $this->mb_str_pad( $fields['ver'], 3, '0', STR_PAD_LEFT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['id'], 10, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['ecuno'], 12, '0', STR_PAD_LEFT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['receipt_no'], 6, '0', STR_PAD_LEFT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['eamount'], 12, '0', STR_PAD_LEFT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['cur'], 3, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['respcode'], 3, '0', STR_PAD_LEFT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['datetime'], 14, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['msgdata'], 40, ' ', STR_PAD_RIGHT, 'utf-8' ) .
+					$this->mb_str_pad( $fields['actiontext'], 40, ' ', STR_PAD_RIGHT, 'utf-8' );
 		}
 
 		return $data;
@@ -165,11 +167,10 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 * @param  string   $encoding   Encoding
 	 * @return string               Padded input
 	 */
-	function mb_str_pad( $input, $pad_length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = null ){
+	function mb_str_pad( $input, $pad_length, $pad_string = ' ', $pad_type = STR_PAD_RIGHT, $encoding = null ) {
 		if ( ! $encoding ) {
 			$diff = strlen( $input ) - mb_strlen( $input );
-		}
-		else {
+		} else {
 			$diff = strlen( $input ) - mb_strlen( $input, $encoding );
 		}
 
@@ -193,9 +194,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
-			do_action( 'woocommerce_'. $this->id .'_check_response', $response );
-		}
-		else {
+			do_action( 'woocommerce_' . $this->id . '_check_response', $response );
+		} else {
 			wp_die( 'Response failed', $this->get_title(), array( 'response' => 200 ) );
 		}
 	}
@@ -218,8 +218,7 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 				// Payment completed
 				$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 				$order->payment_complete();
-			}
-			else {
+			} else {
 				// Set status to failed
 				$order->update_status( 'failed', sprintf( '%s: %s', $this->get_title(), __( 'Payment not made or is not verified.', 'wc-gateway-estonia-banklink' ) ) );
 			}
@@ -241,8 +240,8 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 */
 	function validate_bank_payment( $response ) {
 		// Result failed by default
-		$result    = array(
-			'status' => 'failed'
+		$result = array(
+			'status' => 'failed',
 		);
 
 		if ( ! is_array( $response ) || empty( $response ) || ! isset( $response['ecuno'] ) ) {
@@ -255,15 +254,15 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 
 		// Check signature verification
 		if ( $verification === 1 ) {
-			switch( $response['respcode'] ) {
+			switch ( $response['respcode'] ) {
 				// Paid
 				case '000':
 					$result['status'] = 'success';
-				break;
+					break;
 
 				default:
 					// Nothing by default
-				break;
+					break;
 			}
 		}
 
@@ -273,24 +272,29 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	/**
 	 * Search for existing postmeta value for the key "_ecuno", which has to be unique
 	 *
-	 * @param  string   $ecuno Unique transaction identifier
+	 * @param  string $ecuno Unique transaction identifier
 	 * @return int|bool        WP_Post ID or false when none found
 	 */
 	function get_order_id_by_ecuno_value( $ecuno ) {
 		global $wpdb;
 
-		return $wpdb->get_var( $wpdb->prepare( "
+		return $wpdb->get_var(
+			$wpdb->prepare(
+				"
 			SELECT postmeta.post_id
 			FROM $wpdb->postmeta AS postmeta
 			WHERE postmeta.meta_key = '_ecuno' AND postmeta.meta_value = '%s'
 			LIMIT 1
-		", $ecuno ) );
+		",
+				$ecuno
+			)
+		);
 	}
 
 	/**
 	 * Generate a new ecuno for order and store it in database. There can be only one per order.
 	 *
-	 * @param  int         $order_id WC_Order ID
+	 * @param  int $order_id WC_Order ID
 	 * @return string|bool           Transaction identifier or false on failure
 	 */
 	function generate_unique_ecuno( $order_id ) {
@@ -302,11 +306,12 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			// new random - does NOT need to be cryptographically secure
 			$rand    = rand( 100000, 999999 );
 			$ecuno   = $date . $rand;
-
 			$post_id = $this->get_order_id_by_ecuno_value( $ecuno );
 
 			if ( ! $post_id ) {
-				add_post_meta( $order_id, '_ecuno', $ecuno );
+				$order = wc_get_order( $order_id );
+				$order->update_meta_data( '_ecuno', $ecuno );
+				$order->save_meta_data();
 
 				return $ecuno;
 			}

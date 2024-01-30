@@ -1,5 +1,6 @@
 <?php
 abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
+
 	/**
 	 * WC_Banklink_Maksekeskus
 	 */
@@ -16,49 +17,52 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 		parent::init_form_fields();
 
 		// Add fields
-		$this->form_fields = array_merge( $this->form_fields, array(
-			'currency'        => array(
-				'title'       => __( 'Currency', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'select',
-				'options'     => get_woocommerce_currencies(),
-				'default'     => get_woocommerce_currency()
-			),
-			'shop_id'         => array(
-				'title'       => __( 'Shop ID', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => '',
-				'description' => __( 'This will be provided by Maksekeskus', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
-			),
-			'api_url'         => array(
-				'title'       => __( 'API URL', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'default'     => 'https://api.maksekeskus.ee/v1/'
-			),
-			'api_secret'      => array(
-				'title'       => __( 'API secret', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'description' => __( 'This will be provided by Maksekeskus', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE
-			),
-			'locale'          => array(
-				'title'       => __( 'Preferred locale', 'wc-gateway-estonia-banklink' ),
-				'type'        => 'text',
-				'description' => __( 'RFC-2616 format locale', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'    => TRUE,
-				'default'     => $this->get_default_language()
-			),
-			'return_url'            => array(
-				'title'             => __( 'Return URL', 'wc-gateway-estonia-banklink' ),
-				'type'              => 'text',
-				'default'           => $this->notify_url,
-				'description'       => __( 'URL, where customer is redirected after the payment.', 'wc-gateway-estonia-banklink' ),
-				'desc_tip'          => TRUE,
-				'custom_attributes' => array(
-					'readonly' => 'readonly'
-				)
+		$this->form_fields = array_merge(
+			$this->form_fields,
+			array(
+				'currency'   => array(
+					'title'   => __( 'Currency', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'select',
+					'options' => get_woocommerce_currencies(),
+					'default' => get_woocommerce_currency(),
+				),
+				'shop_id'    => array(
+					'title'       => __( 'Shop ID', 'wc-gateway-estonia-banklink' ),
+					'type'        => 'text',
+					'default'     => '',
+					'description' => __( 'This will be provided by Maksekeskus', 'wc-gateway-estonia-banklink' ),
+					'desc_tip'    => true,
+				),
+				'api_url'    => array(
+					'title'   => __( 'API URL', 'wc-gateway-estonia-banklink' ),
+					'type'    => 'text',
+					'default' => 'https://api.maksekeskus.ee/v1/',
+				),
+				'api_secret' => array(
+					'title'       => __( 'API secret', 'wc-gateway-estonia-banklink' ),
+					'type'        => 'text',
+					'description' => __( 'This will be provided by Maksekeskus', 'wc-gateway-estonia-banklink' ),
+					'desc_tip'    => true,
+				),
+				'locale'     => array(
+					'title'       => __( 'Preferred locale', 'wc-gateway-estonia-banklink' ),
+					'type'        => 'text',
+					'description' => __( 'RFC-2616 format locale', 'wc-gateway-estonia-banklink' ),
+					'desc_tip'    => true,
+					'default'     => $this->get_default_language(),
+				),
+				'return_url' => array(
+					'title'             => __( 'Return URL', 'wc-gateway-estonia-banklink' ),
+					'type'              => 'text',
+					'default'           => $this->notify_url,
+					'description'       => __( 'URL, where customer is redirected after the payment.', 'wc-gateway-estonia-banklink' ),
+					'desc_tip'          => true,
+					'custom_attributes' => array(
+						'readonly' => 'readonly',
+					),
+				),
 			)
-		) );
+		);
 	}
 
 	/**
@@ -70,20 +74,20 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 		// Return URL
 		$return_url = array(
 			'url'    => $this->get_option( 'return_url' ),
-			'method' => 'POST'
+			'method' => 'POST',
 		);
 
 		return array(
 			'return_url'       => $return_url,
 			'cancel_url'       => $return_url,
-			'notification_url' => $return_url
+			'notification_url' => $return_url,
 		);
 	}
 
 	/**
 	 * Generate response/request signature of MAC fields
 	 *
-	 * @param  array  $fields Fields
+	 * @param  array $fields Fields
 	 * @return string         Signature
 	 */
 	function get_signature( $fields ) {
@@ -107,9 +111,8 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
-			do_action( 'woocommerce_'. $this->id .'_check_response', $response );
-		}
-		else {
+			do_action( 'woocommerce_' . $this->id . '_check_response', $response );
+		} else {
 			wp_die( 'Response failed', $this->get_title(), array( 'response' => 200 ) );
 		}
 	}
@@ -132,8 +135,7 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 
 			if ( in_array( $order->get_status(), array( 'processing', 'cancelled', 'refunded', 'completed' ) ) ) {
 				// Order already dealt with
-			}
-			else {
+			} else {
 				// Payment completed
 				$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 				$order->payment_complete( isset( $validation['transaction_id'] ) ? $validation['transaction_id'] : '' );
@@ -174,10 +176,10 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 	 */
 	function validate_bank_payment( $response ) {
 		// Result failed by default
-		$result    = array(
+		$result = array(
 			'order_id' => '',
 			'amount'   => '',
-			'status'   => 'failed'
+			'status'   => 'failed',
 		);
 
 		if ( ! is_array( $response ) || empty( $response ) || ! isset( $response['json'] ) ) {
@@ -188,7 +190,7 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 		$json_data    = $response['json'];
 		$response_mac = $response['mac'];
 
-		$message   = @json_decode( $json_data );
+		$message = @json_decode( $json_data );
 
 		if ( ! $message ) {
 			$message = @json_decode( stripslashes( $json_data ) );
@@ -201,10 +203,9 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 		// Compare signatures
 		if ( $this->get_signature( $message ) == $response_mac ) {
 			// Get order ID based on version
-			if( isset( $message->reference ) ) {
+			if ( isset( $message->reference ) ) {
 				$result['order_id'] = $message->reference;
-			}
-			else {
+			} else {
 				$result['order_id'] = $message->paymentId;
 			}
 
@@ -214,28 +215,28 @@ abstract class WC_Banklink_Maksekeskus extends WC_Banklink {
 			// Set transaction ID
 			$result['transaction_id'] = $message->transaction;
 
-			switch( $message->status ) {
+			switch ( $message->status ) {
 				// Payment started, but not paid
 				case 'RECEIVED':
 				case 'CREATED':
 					$result['status'] = 'received';
-				break;
+					break;
 
 				// Paid
 				case 'PAID':
 				case 'COMPLETED':
 					$result['status'] = 'success';
-				break;
+					break;
 
 				// Cancelled or paid
 				case 'CANCELLED':
 				case 'EXPIRED':
 					$result['status'] = 'cancelled';
-				break;
+					break;
 
 				default:
 					// Nothing by default
-				break;
+					break;
 			}
 		}
 

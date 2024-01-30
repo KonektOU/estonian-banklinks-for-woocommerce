@@ -7,10 +7,9 @@
  * @return integer         Order ID
  */
 function wc_estonian_gateways_get_order_id( $order ) {
-	if( method_exists( $order, 'get_id' ) ) {
+	if ( method_exists( $order, 'get_id' ) ) {
 		return $order->get_id();
-	}
-	else {
+	} else {
 		return $order->id;
 	}
 }
@@ -22,10 +21,9 @@ function wc_estonian_gateways_get_order_id( $order ) {
  * @return string Country
  */
 function wc_estonian_gateways_get_customer_billing_country() {
-	if( method_exists( WC()->customer, 'get_billing_country' ) ) {
+	if ( method_exists( WC()->customer, 'get_billing_country' ) ) {
 		return WC()->customer->get_billing_country();
-	}
-	else {
+	} else {
 		return WC()->customer->get_country();
 	}
 }
@@ -38,10 +36,9 @@ function wc_estonian_gateways_get_customer_billing_country() {
  * @return string Country
  */
 function wc_estonian_gateways_get_customer_ip_address( $order ) {
-	if( method_exists( $order, 'get_customer_ip_address' ) ) {
+	if ( method_exists( $order, 'get_customer_ip_address' ) ) {
 		return $order->get_customer_ip_address();
-	}
-	else {
+	} else {
 		return $order->customer_ip_address;
 	}
 }
@@ -66,10 +63,9 @@ function wc_estonian_gateways_get_order_total( $order ) {
  * @return string          Order billing email
  */
 function wc_estonian_gateways_get_order_billing_email( $order ) {
-	if( method_exists( $order, 'get_billing_email' ) ) {
+	if ( method_exists( $order, 'get_billing_email' ) ) {
 		return $order->get_billing_email();
-	}
-	else {
+	} else {
 		return $order->billing_email;
 	}
 }
@@ -82,10 +78,9 @@ function wc_estonian_gateways_get_order_billing_email( $order ) {
  * @return integer         Order ID
  */
 function wc_estonian_gateways_get_order_currency( $order ) {
-	if( method_exists( $order, 'get_currency' ) ) {
+	if ( method_exists( $order, 'get_currency' ) ) {
 		return $order->get_currency();
-	}
-	else {
+	} else {
 		return $order->get_order_currency();
 	}
 }
