@@ -259,7 +259,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 			$order->save();
 
 			// Out method
-			$selected_method     = get_post_meta( $order_id, $this->selected_method_meta_field, true );
+			$selected_method     = $order->get_meta( $this->selected_method_meta_field, true );
 			$selected_method_url = null;
 
 			// Find correct URL to redirect to

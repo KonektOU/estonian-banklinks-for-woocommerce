@@ -3,13 +3,16 @@
  * Plugin Name: Estonian Banklinks for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
  * Description: Extends WooCommerce with most commonly used Estonian banklinks.
- * Version: 1.4
+ * Version: 1.5
  * Author: Konekt OÜ
  * Author URI: https://www.konekt.ee
+ * Developer: Risto Niinemets
+ * Developer URI: https://www.konekt.ee
  * License: GPLv2 or later
  * Text Domain: wc-gateway-estonia-banklink
- * WC requires at least: 2.6
- * WC tested up to: 8.2.1
+ * Domain Path: /languages
+ * WC requires at least: 3.3
+ * WC tested up to: 8.5.2
  *
  * @package Estonian Banklinks for WooCommerce
  */
@@ -71,6 +74,8 @@ class Estonian_Banklinks_For_WooCommerce {
 			$this->includes();
 			$this->load_translations();
 		}
+
+		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_cot_compatibility' ) );
 	}
 
 	/**
@@ -168,6 +173,16 @@ class Estonian_Banklinks_For_WooCommerce {
 		return $gateways;
 	}
 
+	/**
+	 * Declare high performance order storage (COT) compatibility
+	 *
+	 * @return void
+	 */
+	public function declare_wc_cot_compatibility() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', WC_ESTONIAN_GATEWAYS_MAIN_FILE, true );
+		}
+	}
 
 	/**
 	 * Fetch instance of this plugin
