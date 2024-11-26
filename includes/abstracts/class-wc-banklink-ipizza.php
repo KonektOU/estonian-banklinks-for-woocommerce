@@ -195,7 +195,10 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Get public key
 		$key        = openssl_pkey_get_public( $public_key );
 		$mac_string = $this->generate_mac_string( $mac_fields );
-		$verify_mac = openssl_verify( $mac_string, base64_decode( $mac_fields['VK_MAC'] ), $key, OPENSSL_ALGO_SHA1 );
+
+		$algo       = $this->get_option( 'sha512', 'no' ) == 'no' ? OPENSSL_ALGO_SHA1 : OPENSSL_ALGO_SHA512;
+
+		$verify_mac = openssl_verify( $mac_string, base64_decode( $mac_fields['VK_MAC'] ), $key, $algo );
 
 		// Check the key
 		if ( $verify_mac === 1 ) {
@@ -224,10 +227,12 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Current time
 		$datetime   = new DateTime( 'NOW' );
 
+		// Get VK_VERSION
+		$version    = $this->get_option( 'sha512', 'yes' ) == 'yes' ? '009' : '008';
 		// Set MAC fields
 		$mac_fields = array(
 			'VK_SERVICE'  => '1012',
-			'VK_VERSION'  => '008',
+			'VK_VERSION'  => $version,
 			'VK_SND_ID'   => $this->get_option( 'vk_snd_id' ),
 			'VK_STAMP'    => wc_estonian_gateways_get_order_id( $order ),
 			'VK_AMOUNT'   => wc_estonian_gateways_get_order_total( $order ),
@@ -247,8 +252,10 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$signature  = '';
 		$mac_string = $this->generate_mac_string( $mac_fields );
 
+		$algo = $this->get_option( 'sha512', 'no' ) == 'no' ? OPENSSL_ALGO_SHA1 : OPENSSL_ALGO_SHA512 ;
+
 		// Try to sign the mac string
-		if ( ! openssl_sign( $mac_string, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
+		if ( ! openssl_sign( $mac_string, $signature, $key, $algo ) ) {
 			$this->debug( 'Unable to generate signature', 'emergency' );
 
 			die( "Unable to generate signature" );

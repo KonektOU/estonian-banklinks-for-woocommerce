@@ -41,6 +41,12 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 				'default'     => 'no',
 				'label'       => __( 'Enable this payment gateway', 'wc-gateway-estonia-banklink' )
 			),
+			'sha512'         => array(
+				'title'       => __( 'Use SHA512 algorithm', 'wc-gateway-estonia-banklink' ),
+				'type'        => 'checkbox',
+				'default'     => 'no',
+				'label'       => __( 'Use SHA512 algorithm for decryption. If disabled it will use SHA1 instead.', 'wc-gateway-estonia-banklink' )
+			),
 			'title'           => array(
 				'title'       => __( 'Title', 'wc-gateway-estonia-banklink' ),
 				'type'        => 'text',

@@ -2,8 +2,8 @@
 Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
-Tested up to: 4.9.3
-Stable tag: 1.4
+Tested up to: 7.1
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,11 @@ Code is maintained and developed at Github. Contributions and discussions are ve
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.5 =
+* Added option to choose between SHA1 and SHA512 algoritm for encrypting bank algorithms
+* If you go to Woocommerce -> Settings -> Payments -> manage, then there is an option to choose between SHA1 and SHA512 algoritm
+* For historical purposes we left SHA1 as default value
 
 = 1.4 =
 * Added Maksekeskus Billing API gateway (beta) for better and simpler checkout with Maksekeskus
