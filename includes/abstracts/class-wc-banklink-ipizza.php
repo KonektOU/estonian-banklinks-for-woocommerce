@@ -91,6 +91,24 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	}
 
 	/**
+	 * Get encryption algorithm
+	 *
+	 * @return int
+	 */
+	public function get_algorithm() {
+		return OPENSSL_ALGO_SHA512;
+	}
+
+	/**
+	 * Get VK version
+	 *
+	 * @return string
+	 */
+	public function get_vk_version() {
+		return '009';
+	}
+
+	/**
 	 * Generates MAC string as needed according to the service number
 	 *
 	 * @param  array $mac_fields MAC fields
@@ -198,7 +216,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		// Get public key.
 		$key        = openssl_pkey_get_public( $public_key );
 		$mac_string = $this->generate_mac_string( $mac_fields );
-		$verify_mac = openssl_verify( $mac_string, base64_decode( $mac_fields['VK_MAC'] ), $key, OPENSSL_ALGO_SHA256 );
+		$verify_mac = openssl_verify( $mac_string, base64_decode( $mac_fields['VK_MAC'] ), $key, $this->get_algorithm() );
 
 		// Check the key.
 		if ( 1 === $verify_mac ) {
@@ -220,16 +238,16 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return string            HTML form
 	 */
 	function output_gateway_redirection_form( $order_id ) {
-		// Get the order
+		// Get the order.
 		$order = wc_get_order( $order_id );
 
-		// Current time
-		$datetime = new DateTime( 'NOW' );
+		// Current time.
+		$datetime = new DateTime( 'now' );
 
-		// Set MAC fields
+		// Set MAC fields.
 		$mac_fields = array(
 			'VK_SERVICE'  => '1012',
-			'VK_VERSION'  => '009',
+			'VK_VERSION'  => $this->get_vk_version(),
 			'VK_SND_ID'   => $this->get_option( 'vk_snd_id' ),
 			'VK_STAMP'    => wc_estonian_gateways_get_order_id( $order ),
 			'VK_AMOUNT'   => wc_estonian_gateways_get_order_total( $order ),
@@ -241,29 +259,29 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 			'VK_DATETIME' => $datetime->format( DateTime::ISO8601 ),
 		);
 
-		// Allow hooking into the data
+		// Allow hooking into the data.
 		$mac_fields = $this->hookable_transaction_data( $mac_fields, $order );
 
-		// Generate MAC string from the private key
+		// Generate MAC string from the private key.
 		$key        = openssl_pkey_get_private( $this->get_option( 'vk_privkey' ), $this->get_option( 'vk_pass' ) );
 		$signature  = '';
 		$mac_string = $this->generate_mac_string( $mac_fields );
 
-		// Try to sign the mac string
-		if ( ! openssl_sign( $mac_string, $signature, $key, OPENSSL_ALGO_SHA1 ) ) {
+		// Try to sign the mac string.
+		if ( ! openssl_sign( $mac_string, $signature, $key, $this->get_algorithm() ) ) {
 			$this->debug( 'Unable to generate signature', 'emergency' );
 
 			die( 'Unable to generate signature' );
 		}
 
-		// Encode signature
+		// Encode signature.
 		$mac_fields['VK_MAC'] = base64_encode( $signature );
 
-		// Extra fields
+		// Extra fields.
 		$mac_fields['VK_LANG']     = $this->get_current_language();
 		$mac_fields['VK_ENCODING'] = $this->encoding;
 
-		// Output form
+		// Output form.
 		return $this->get_redirect_form( $this->get_option( 'vk_dest' ), $mac_fields );
 	}
 
