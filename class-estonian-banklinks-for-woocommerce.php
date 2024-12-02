@@ -58,6 +58,7 @@ class Estonian_Banklinks_For_WooCommerce {
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
+		add_action( 'init', array( $this, 'load_translations' ) );
 	}
 
 	/**
@@ -70,9 +71,8 @@ class Estonian_Banklinks_For_WooCommerce {
 		if ( $this->is_payment_gateway_class_available() ) {
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateways' ) );
 
-			// Load functionality, translations.
+			// Load functionality.
 			$this->includes();
-			$this->load_translations();
 		}
 
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_cot_compatibility' ) );
