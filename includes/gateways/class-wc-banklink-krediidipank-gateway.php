@@ -2,6 +2,11 @@
 class WC_Banklink_Krediidipank_Gateway extends WC_Banklink_Ipizza {
 
 	/**
+	 * @var string
+	 */
+	public $logo;
+
+	/**
 	 * WC_Banklink_Krediidipank_Gateway
 	 */
 	function __construct() {
