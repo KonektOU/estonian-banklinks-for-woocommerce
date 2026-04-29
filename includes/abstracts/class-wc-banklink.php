@@ -2,6 +2,12 @@
 abstract class WC_Banklink extends WC_Payment_Gateway {
 
 	/**
+	 * Notification URL for bank callbacks
+	 * @var string
+	 */
+	public $notify_url;
+
+	/**
 	 * WC_Banklink
 	 */
 	function __construct() {

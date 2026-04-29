@@ -2,7 +2,7 @@
 Contributors: konektou, ristoniinemets, mstannu
 Tags: woocommerce, estonia, banklink, pangalink, payment gateway
 Requires at least: 4.1
-Tested up to: 6.7.1
+Tested up to: 6.9.4
 Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -35,6 +35,9 @@ Code is maintained and developed at Github. Contributions and discussions are ve
 3. WooCommerce Checkout page
 
 == Changelog ==
+
+= 1.7 =
+* Added PHP8-compatibility
 
 = 1.6 =
 * Add SHA512 encryption support for IPIZZA protocols
