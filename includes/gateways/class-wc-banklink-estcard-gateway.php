@@ -183,14 +183,16 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 * @return void
 	 */
 	function check_bank_response() {
-		@ob_clean();
+		if ( ob_get_level() ) {
+			ob_clean();
+		}
 
 		$response = ! empty( $_REQUEST ) ? stripslashes_deep( $_REQUEST ) : false;
 
 		// Debug response data
 		$this->debug( $response );
 
-		if ( $response && isset( $response['ecuno'] ) ) {
+		if ( $response && isset( $response['ecuno'], $response['mac'] ) ) {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
@@ -208,13 +210,17 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 */
 	function validate_bank_response( $response ) {
 		$validation = $this->validate_bank_payment( $response );
-		$order_id   = $this->get_order_id_by_ecuno_value( $response['ecuno'] );
-		$order      = wc_get_order( $order_id );
-		$return_url = $this->get_return_url( $order );
+		$order_id   = $this->get_order_id_by_ecuno_value( isset( $response['ecuno'] ) ? $response['ecuno'] : '' );
+		$order      = $order_id ? wc_get_order( $order_id ) : false;
+		$return_url = $this->get_return_url( $order ? $order : null );
+
+		if ( ! $order ) {
+			$this->debug( 'Response names a transaction with no order behind it', 'error' );
+		}
 
 		if ( $order ) {
 			// Check validation
-			if ( isset( $validation['status'] ) && $validation['status'] == 'success' ) {
+			if ( isset( $validation['status'] ) && 'success' === $validation['status'] && $this->response_matches_order( $response, $order ) ) {
 				// Payment completed
 				$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 				$order->payment_complete();
@@ -225,11 +231,53 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 		}
 
 		// Redirect to order details
-		if ( isset( $response['auto'] ) && $response['auto'] == 'N' ) {
-			wp_redirect( $return_url );
+		if ( isset( $response['auto'] ) && 'N' === $response['auto'] ) {
+			wp_safe_redirect( $return_url );
 		}
 
 		exit;
+	}
+
+	/**
+	 * Whether a verified response is for the amount of the order.
+	 *
+	 * Estcard sends the amount in cents, and it is covered by the signature.
+	 *
+	 * @param array    $response Response from the bank.
+	 * @param WC_Order $order    Order.
+	 *
+	 * @return bool
+	 */
+	protected function response_matches_order( $response, $order ) {
+		$expected = wc_estonian_gateways_get_order_total( $order );
+		$paid     = isset( $response['eamount'] ) ? number_format( (float) $response['eamount'] / 100, 2, '.', '' ) : '';
+
+		$matches = ( $expected === $paid );
+
+		if ( ! $matches ) {
+			$this->debug(
+				sprintf( 'Response does not match order %d: paid %s, expected %s', $order->get_id(), $paid, $expected ),
+				'alert'
+			);
+
+			$order->add_order_note(
+				sprintf(
+					/* translators: 1: paid amount, 2: expected amount */
+					__( 'Payment response does not match the order: %1$s received, %2$s expected.', 'wc-gateway-estonia-banklink' ),
+					$paid,
+					$expected
+				)
+			);
+		}
+
+		/**
+		 * Whether a verified response is accepted as payment for the order.
+		 *
+		 * @param bool     $matches  Whether the amount matches.
+		 * @param array    $response Response from the bank.
+		 * @param WC_Order $order    Order.
+		 */
+		return (bool) apply_filters( 'woocommerce_' . $this->id . '_response_matches_order', $matches, $response, $order );
 	}
 
 	/**
@@ -248,12 +296,26 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 			return $result;
 		}
 
+		if ( empty( $response['mac'] ) || ! isset( $response['respcode'] ) ) {
+			return $result;
+		}
+
+		// An unreadable or unset public key made openssl_verify() throw a
+		// TypeError on PHP 8 - a fatal on a URL the bank posts to.
+		$public_key = openssl_pkey_get_public( $this->get_option( 'public_key' ) );
+
+		if ( false === $public_key ) {
+			$this->debug( 'Bank public key is missing or could not be read', 'emergency' );
+
+			return $result;
+		}
+
 		// Generate mac string and verify signature
 		$mac_string   = $this->generate_mac_string( $response );
-		$verification = openssl_verify( $mac_string, pack( 'H*', $response['mac'] ), $this->get_option( 'public_key' ), OPENSSL_ALGO_SHA1 );
+		$verification = openssl_verify( $mac_string, pack( 'H*', $response['mac'] ), $public_key, OPENSSL_ALGO_SHA1 );
 
 		// Check signature verification
-		if ( $verification === 1 ) {
+		if ( 1 === $verification ) {
 			switch ( $response['respcode'] ) {
 				// Paid
 				case '000':
@@ -276,19 +338,26 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 * @return int|bool        WP_Post ID or false when none found
 	 */
 	function get_order_id_by_ecuno_value( $ecuno ) {
-		global $wpdb;
+		if ( '' === $ecuno || null === $ecuno ) {
+			return false;
+		}
 
-		return $wpdb->get_var(
-			$wpdb->prepare(
-				"
-			SELECT postmeta.post_id
-			FROM $wpdb->postmeta AS postmeta
-			WHERE postmeta.meta_key = '_ecuno' AND postmeta.meta_value = '%s'
-			LIMIT 1
-		",
-				$ecuno
+		// This used to be a hand-written SELECT against wp_postmeta, while the
+		// plugin declares itself compatible with high performance order
+		// storage - where order meta is not in wp_postmeta at all. On a shop
+		// that had switched, the bank's response could never be matched to its
+		// order, so no Estcard payment was ever completed. wc_get_orders()
+		// asks whichever store the shop is actually on.
+		$orders = wc_get_orders(
+			array(
+				'limit'      => 1,
+				'return'     => 'ids',
+				'meta_key'   => '_ecuno', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- the only handle on the transaction the bank gives back.
+				'meta_value' => $ecuno,   // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
+
+		return empty( $orders ) ? false : absint( $orders[0] );
 	}
 
 	/**
@@ -299,16 +368,16 @@ class WC_Banklink_Estcard_Gateway extends WC_Banklink {
 	 */
 	function generate_unique_ecuno( $order_id ) {
 		$tries = 0;
-		$date  = date( 'Ym' );
+		$date  = gmdate( 'Ym' );
 
 		// we don't expect to exceed 1, but need a limit
 		while ( $tries < 50 ) {
 			// new random - does NOT need to be cryptographically secure
-			$rand    = rand( 100000, 999999 );
-			$ecuno   = $date . $rand;
-			$post_id = $this->get_order_id_by_ecuno_value( $ecuno );
+			$rand     = wp_rand( 100000, 999999 );
+			$ecuno    = $date . $rand;
+			$existing = $this->get_order_id_by_ecuno_value( $ecuno );
 
-			if ( ! $post_id ) {
+			if ( ! $existing ) {
 				$order = wc_get_order( $order_id );
 				$order->update_meta_data( '_ecuno', $ecuno );
 				$order->save_meta_data();

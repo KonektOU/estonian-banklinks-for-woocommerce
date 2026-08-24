@@ -27,10 +27,10 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 			add_action( 'woocommerce_checkout_update_order_review', array( $this, 'checkout_save_session_gateway_method' ), 10, 1 );
 			add_filter( 'woocommerce_before_template_part', array( $this, 'checkout_maybe_save_session_gateway_method' ), 10, 1 );
 
-			// Enqueue some gateway specific javascript
-			if ( is_checkout() ) {
-				wc_enqueue_js( $this->gateway_method_js() );
-			}
+			// Enqueue some gateway specific javascript. Gateways are built
+			// before the main query exists, so is_checkout() cannot be asked
+			// here - it warns, and answers no.
+			add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_gateway_method_js' ) );
 
 			$this->has_fields = true;
 		}
@@ -253,7 +253,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 		$transaction_request = $this->request_from_api( $this->get_api_url( 'transactions' ), 'POST', $transaction_data );
 
 		// If went OK, we should pass this
-		if ( $transaction_request ) {
+		if ( $transaction_request && isset( $transaction_request->id, $transaction_request->payment_methods->banklinks ) ) {
 			// Set transaction ID to order
 			$order->set_transaction_id( $transaction_request->id );
 			$order->save();
@@ -264,12 +264,46 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 
 			// Find correct URL to redirect to
 			foreach ( $transaction_request->payment_methods->banklinks as $method ) {
-				if ( $method->name == $selected_method ) {
+				if ( isset( $method->name ) && $method->name === $selected_method ) {
 					$selected_method_url = $method->url;
 				}
 			}
 
-			return $this->get_redirect_form( $selected_method_url );
+			if ( $selected_method_url ) {
+				return $this->get_redirect_form( $selected_method_url );
+			}
+
+			$this->debug( sprintf( 'No URL for the bank chosen on order %d: %s', $order->get_id(), $selected_method ), 'error' );
+		} else {
+			$this->debug( sprintf( 'Could not open a transaction for order %d', $order->get_id() ), 'error' );
+		}
+
+		// Without a URL there is nothing to redirect to, and returning
+		// nothing left the customer on a blank receipt page.
+		return wc_print_notice(
+			sprintf(
+				/* translators: %s: gateway title */
+				__( 'Could not start the payment with %s. Please pick a payment method again.', 'wc-gateway-estonia-banklink' ),
+				$this->get_title()
+			),
+			'error',
+			array(),
+			true
+		) . sprintf(
+			'<p><a class="button" href="%s">%s</a></p>',
+			esc_url( $order->get_checkout_payment_url() ),
+			esc_html__( 'Try again', 'wc-gateway-estonia-banklink' )
+		);
+	}
+
+	/**
+	 * Add the bank chooser script, on the checkout only
+	 *
+	 * @return void
+	 */
+	public function maybe_enqueue_gateway_method_js() {
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			wc_enqueue_js( $this->gateway_method_js() );
 		}
 	}
 
@@ -285,7 +319,7 @@ class WC_Banklink_Maksekeskus_Billing_API extends WC_Banklink_Maksekeskus {
 		$form = sprintf( '<form action="%s" method="get" id="banklink_%s_submit_form"><button class="button submit">%s</button></form>', esc_attr( $url ), $this->id, __( 'Pay', 'wc-gateway-estonia-banklink' ) );
 
 		// Add inline JS
-		wc_enqueue_js( sprintf( 'window.location = "%s";', $url ) );
+		wc_enqueue_js( sprintf( 'window.location = %s;', wp_json_encode( $url ) ) );
 
 		return $form;
 	}

@@ -116,14 +116,20 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 */
 	function generate_mac_string( $mac_fields ) {
 		// Get service number.
-		$service_number = $mac_fields['VK_SERVICE'];
+		$service_number = isset( $mac_fields['VK_SERVICE'] ) ? (int) $mac_fields['VK_SERVICE'] : 0;
+
+		if ( ! isset( $this->variable_order[ $service_number ] ) ) {
+			return '';
+		}
 
 		// Data holder.
 		$data = '';
 
-		// Append data as needed.
+		// Append data as needed. A field the bank did not send counts as
+		// empty; reading it straight off the array was an undefined key
+		// warning on PHP 8 for every response that omits one.
 		foreach ( $this->variable_order[ $service_number ] as $key ) {
-			$value = $mac_fields[ $key ];
+			$value = isset( $mac_fields[ $key ] ) ? (string) $mac_fields[ $key ] : '';
 			$data .= str_pad( mb_strlen( $value ), 3, '0', STR_PAD_LEFT ) . $value;
 		}
 
@@ -137,14 +143,16 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return void
 	 */
 	function check_bank_response() {
-		@ob_clean();
+		if ( ob_get_level() ) {
+			ob_clean();
+		}
 
-		$response = ! empty( $_REQUEST ) ? $_REQUEST : false;
+		$response = ! empty( $_REQUEST ) ? wp_unslash( $_REQUEST ) : false;
 
 		// Debug response data
-		$this->debug( $_REQUEST );
+		$this->debug( $response );
 
-		if ( $response && isset( $response['VK_STAMP'] ) ) {
+		if ( $response && isset( $response['VK_STAMP'], $response['VK_SERVICE'], $response['VK_MAC'] ) ) {
 			header( 'HTTP/1.1 200 OK' );
 
 			// Validate response
@@ -161,11 +169,20 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	 * @return void
 	 */
 	function validate_bank_response( $request ) {
-		$order      = wc_get_order( $request['VK_STAMP'] );
+		$order = wc_get_order( isset( $request['VK_STAMP'] ) ? absint( $request['VK_STAMP'] ) : 0 );
+
+		// VK_STAMP is whatever was posted to a public URL. An order that is
+		// not there used to be a fatal on the next line.
+		if ( ! $order ) {
+			$this->debug( 'Bank response names an order that does not exist', 'error' );
+
+			wp_die( esc_html__( 'Order not found.', 'wc-gateway-estonia-banklink' ), esc_html( $this->get_title() ), array( 'response' => 200 ) );
+		}
+
 		$return_url = $this->get_return_url( $order );
 
-		if ( in_array( $order->get_status(), array( 'processing', 'cancelled' ) ) ) {
-			wp_redirect( $return_url );
+		if ( in_array( $order->get_status(), array( 'processing', 'cancelled' ), true ) ) {
+			wp_safe_redirect( $return_url );
 
 			exit;
 		}
@@ -175,7 +192,7 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		$validation = $this->validate_banklink_payment( $request, $public_key );
 
 		// Check validation
-		if ( isset( $validation['payment'] ) && $validation['payment'] == 'completed' ) {
+		if ( isset( $validation['payment'] ) && 'completed' === $validation['payment'] && $this->response_matches_order( $request, $order ) ) {
 			// Payment completed.
 			$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 			$order->payment_complete( isset( $request['VK_T_NO'] ) ? $request['VK_T_NO'] : '' );
@@ -185,8 +202,8 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 
 		// Redirect to order details.
-		if ( isset( $request['VK_AUTO'] ) && $request['VK_AUTO'] == 'N' ) {
-			wp_redirect( $return_url );
+		if ( isset( $request['VK_AUTO'] ) && 'N' === $request['VK_AUTO'] ) {
+			wp_safe_redirect( $return_url );
 		}
 
 		exit;
@@ -203,18 +220,31 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 	public function validate_banklink_payment( $params, $public_key ) {
 		// Set some variables.
 		$result     = array( 'payment' => 'failed' );
-		$vk_service = (int) $params['VK_SERVICE'];
+		$vk_service = isset( $params['VK_SERVICE'] ) ? (int) $params['VK_SERVICE'] : 0;
 		$mac_fields = array();
 
 		// Generate MAC fields.
 		foreach ( (array) $params as $f => $v ) {
-			if ( substr( $f, 0, 3 ) == 'VK_' ) {
+			if ( 0 === strpos( $f, 'VK_' ) ) {
 				$mac_fields[ $f ] = $v;
 			}
 		}
 
-		// Get public key.
-		$key        = openssl_pkey_get_public( $public_key );
+		if ( empty( $mac_fields['VK_MAC'] ) || ! isset( $this->variable_order[ $vk_service ] ) ) {
+			return $result;
+		}
+
+		// An unreadable or unset public key made openssl_verify() throw a
+		// TypeError on PHP 8 - a fatal on a URL the bank posts to - rather
+		// than failing the payment.
+		$key = openssl_pkey_get_public( $public_key );
+
+		if ( false === $key ) {
+			$this->debug( 'Bank public key is missing or could not be read', 'emergency' );
+
+			return $result;
+		}
+
 		$mac_string = $this->generate_mac_string( $mac_fields );
 		$verify_mac = openssl_verify( $mac_string, base64_decode( $mac_fields['VK_MAC'] ), $key, $this->get_algorithm() );
 
@@ -229,6 +259,63 @@ abstract class WC_Banklink_Ipizza extends WC_Banklink {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Whether a verified response is for the amount and currency of the order.
+	 *
+	 * The signature says the bank sent it; it does not say it is about this
+	 * order for this money. VK_AMOUNT and VK_CURR are both covered by the
+	 * signature, so a mismatch is either a partial payment or a response
+	 * belonging somewhere else - neither should complete the order.
+	 *
+	 * @param array    $request Response from the bank.
+	 * @param WC_Order $order   Order.
+	 *
+	 * @return bool
+	 */
+	protected function response_matches_order( $request, $order ) {
+		$expected_amount   = wc_estonian_gateways_get_order_total( $order );
+		$expected_currency = wc_estonian_gateways_get_order_currency( $order );
+
+		$paid_amount   = isset( $request['VK_AMOUNT'] ) ? number_format( (float) $request['VK_AMOUNT'], 2, '.', '' ) : '';
+		$paid_currency = isset( $request['VK_CURR'] ) ? $request['VK_CURR'] : '';
+
+		$matches = ( $expected_amount === $paid_amount ) && ( 0 === strcasecmp( $expected_currency, $paid_currency ) );
+
+		if ( ! $matches ) {
+			$this->debug(
+				sprintf(
+					'Response does not match order %d: paid %s %s, expected %s %s',
+					$order->get_id(),
+					$paid_amount,
+					$paid_currency,
+					$expected_amount,
+					$expected_currency
+				),
+				'alert'
+			);
+
+			$order->add_order_note(
+				sprintf(
+					/* translators: 1: paid amount, 2: paid currency, 3: expected amount, 4: expected currency */
+					__( 'Payment response does not match the order: %1$s %2$s received, %3$s %4$s expected.', 'wc-gateway-estonia-banklink' ),
+					$paid_amount,
+					$paid_currency,
+					$expected_amount,
+					$expected_currency
+				)
+			);
+		}
+
+		/**
+		 * Whether a verified response is accepted as payment for the order.
+		 *
+		 * @param bool     $matches Whether amount and currency match.
+		 * @param array    $request Response from the bank.
+		 * @param WC_Order $order   Order.
+		 */
+		return (bool) apply_filters( 'woocommerce_' . $this->id . '_response_matches_order', $matches, $request, $order );
 	}
 
 	/**

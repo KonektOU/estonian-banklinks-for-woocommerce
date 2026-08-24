@@ -138,10 +138,18 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	function validate_bank_response( $request ) {
 		// Validate the results with public key
 		$validation = $this->validate_banklink_payment( $request, $this->get_option( 'vk_pubkey' ) );
-		$order      = wc_get_order( $request['SOLOPMT_RETURN_STAMP'] );
+		$order      = wc_get_order( isset( $request['SOLOPMT_RETURN_STAMP'] ) ? absint( $request['SOLOPMT_RETURN_STAMP'] ) : 0 );
+
+		// SOLOPMT_RETURN_STAMP is whatever was posted to a public URL. An
+		// order that is not there used to be a fatal below.
+		if ( ! $order ) {
+			$this->debug( 'Bank response names an order that does not exist', 'error' );
+
+			wp_die( esc_html__( 'Order not found.', 'wc-gateway-estonia-banklink' ), esc_html( $this->get_title() ), array( 'response' => 200 ) );
+		}
 
 		// Check validation
-		if ( isset( $validation['payment'] ) && $validation['payment'] == 'success' ) {
+		if ( isset( $validation['payment'] ) && 'success' === $validation['payment'] ) {
 			// Payment completed
 			$order->add_order_note( sprintf( '%s: %s', $this->get_title(), __( 'Payment completed.', 'wc-gateway-estonia-banklink' ) ) );
 			$order->payment_complete();
@@ -151,7 +159,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		}
 
 		// Redirect to order details
-		wp_redirect( $this->get_return_url( $order ) );
+		wp_safe_redirect( $this->get_return_url( $order ) );
 		exit;
 	}
 
@@ -170,12 +178,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 
 		// Append data as needed
 		foreach ( $variable_order as $key ) {
-			if ( isset( $mac_fields[ $key ] ) ) {
-				;
-				$data .= $mac_fields[ $key ] . '&';
-			} else {
-				$data .= '&';
-			}
+			$data .= isset( $mac_fields[ $key ] ) ? $mac_fields[ $key ] . '&' : '&';
 		}
 
 		// Add MAC string
@@ -184,7 +187,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		$data   .= $mac . '&';
 
 		// Encrypt data
-		$data = ( $keyvers == '0001' ) ? md5( $data ) : sha1( $data );
+		$data = ( '0001' === $keyvers ) ? md5( $data ) : sha1( $data );
 
 		// Return data
 		return strtoupper( $data );
@@ -200,7 +203,7 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 	function validate_banklink_payment( $params, $pubkey ) {
 		// Set some variables
 		$result         = array(
-			'orderNr' => $params['SOLOPMT_RETURN_STAMP'],
+			'orderNr' => isset( $params['SOLOPMT_RETURN_STAMP'] ) ? $params['SOLOPMT_RETURN_STAMP'] : '',
 			'payment' => 'failed',
 		);
 		$variable_order = array( 'SOLOPMT_RETURN_VERSION', 'SOLOPMT_RETURN_STAMP', 'SOLOPMT_RETURN_REF', 'SOLOPMT_RETURN_PAID' );
@@ -220,10 +223,12 @@ abstract class WC_Banklink_Solo extends WC_Banklink {
 		$data   .= $mac . '&';
 
 		// Encrypt data
-		$data = ( $keyvers == '0001' ) ? md5( $data ) : sha1( $data );
+		$data = ( '0001' === $keyvers ) ? md5( $data ) : sha1( $data );
 
-		// Check the MACs
-		if ( isset( $params['SOLOPMT_RETURN_MAC'] ) && strtoupper( $data ) == $params['SOLOPMT_RETURN_MAC'] ) {
+		// Check the MACs. hash_equals() rather than ==: the comparison is
+		// against a value the caller chose, and a plain compare leaks how much
+		// of it was right.
+		if ( isset( $params['SOLOPMT_RETURN_MAC'] ) && hash_equals( strtoupper( $data ), (string) $params['SOLOPMT_RETURN_MAC'] ) ) {
 			// Correct signature
 			if ( isset( $params['SOLOPMT_RETURN_PAID'] ) ) {
 				$result['payment'] = 'success';

@@ -150,11 +150,16 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return boolean
 	 */
 	function is_available() {
-		if ( WC()->customer == null ) {
+		if ( ! WC()->customer ) {
 			return false;
 		}
 
-		return $this->get_option( 'enabled', 'no' ) != 'no' && array_intersect( array( 'all', wc_estonian_gateways_get_customer_billing_country() ), $this->get_option( 'countries' ) );
+		// A setting saved before the country list existed comes back as an
+		// empty string, which array_intersect() is a TypeError on from PHP 8.
+		$countries = (array) $this->get_option( 'countries', array( 'all' ) );
+
+		return 'no' !== $this->get_option( 'enabled', 'no' )
+			&& (bool) array_intersect( array( 'all', wc_estonian_gateways_get_customer_billing_country() ), $countries );
 	}
 
 	/**
@@ -179,7 +184,23 @@ abstract class WC_Banklink extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	function debug( $data, $level = 'debug' ) {
-		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG === true ) {
+		/**
+		 * Whether the gateway writes to the WooCommerce log.
+		 *
+		 * WP_DEBUG_LOG is just as often a path as it is true, and this used to
+		 * compare against true only - so on a site logging to its own file,
+		 * nothing about a failed payment was ever written down.
+		 *
+		 * @param bool   $enabled Whether to log.
+		 * @param string $id      Gateway id.
+		 */
+		$enabled = apply_filters(
+			'woocommerce_estonian_gateways_debug_enabled',
+			defined( 'WP_DEBUG_LOG' ) && ! empty( WP_DEBUG_LOG ),
+			$this->id
+		);
+
+		if ( $enabled ) {
 			$log_data = is_array( $data ) || is_object( $data ) ? print_r( $data, true ) : var_export( $data, true );
 
 			if ( function_exists( 'wc_get_logger' ) ) {

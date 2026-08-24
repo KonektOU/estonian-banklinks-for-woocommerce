@@ -3,7 +3,7 @@
  * Plugin Name: Estonian Banklinks for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/estonian-banklinks-for-woocommerce/
  * Description: Extends WooCommerce with most commonly used Estonian banklinks.
- * Version: 1.6.1
+ * Version: 1.7
  * Author: Konekt OÜ
  * Author URI: https://www.konekt.ee
  * Developer: Risto Niinemets
@@ -11,8 +11,10 @@
  * License: GPLv2 or later
  * Text Domain: wc-gateway-estonia-banklink
  * Domain Path: /languages
- * WC requires at least: 3.3
- * WC tested up to: 9.4.2
+ * WC requires at least: 7.0
+ * WC tested up to: 11.0
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
  *
  * @package Estonian Banklinks for WooCommerce
  */
@@ -26,6 +28,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Main file constant
  */
 define( 'WC_ESTONIAN_GATEWAYS_MAIN_FILE', __FILE__ );
+
+/**
+ * Plugin version, also the asset cache buster
+ */
+define( 'WC_ESTONIAN_GATEWAYS_VERSION', '1.7' );
 
 /**
  * Includes folder path
@@ -76,6 +83,7 @@ class Estonian_Banklinks_For_WooCommerce {
 		}
 
 		add_action( 'before_woocommerce_init', array( $this, 'declare_wc_cot_compatibility' ) );
+		add_action( 'woocommerce_blocks_loaded', array( $this, 'register_blocks_support' ) );
 	}
 
 	/**
@@ -84,7 +92,7 @@ class Estonian_Banklinks_For_WooCommerce {
 	 * @return void
 	 */
 	public function wp_enqueue_scripts() {
-		wp_register_style( 'wc-gateway-estonia-banklink', plugins_url( 'assets/css/style.css', WC_ESTONIAN_GATEWAYS_MAIN_FILE ), array(), '1.5' );
+		wp_register_style( 'wc-gateway-estonia-banklink', plugins_url( 'assets/css/style.css', WC_ESTONIAN_GATEWAYS_MAIN_FILE ), array(), WC_ESTONIAN_GATEWAYS_VERSION );
 
 		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
 			wp_enqueue_style( 'wc-gateway-estonia-banklink' );
@@ -174,6 +182,69 @@ class Estonian_Banklinks_For_WooCommerce {
 	}
 
 	/**
+	 * Gateway ids that are offered in the checkout block
+	 *
+	 * Every gateway here sends the customer off to pay after the order is
+	 * placed and asks nothing at checkout, which is what makes one file of
+	 * block registration enough for all of them.
+	 *
+	 * Maksekeskus API is deliberately not among them: it needs the customer
+	 * to pick a bank at checkout, and without that pick it has no URL to send
+	 * them to. It stays on the shortcode checkout until that chooser is built
+	 * as a block field.
+	 *
+	 * @return string[]
+	 */
+	public function get_blocks_gateway_ids() {
+		$ids = array(
+			'danske',
+			'lhv',
+			'seb',
+			'swedbank',
+			'krediidipank',
+			'nordea',
+			'nordea_ipizza',
+			'liisi',
+			'maksekeskus_redirect',
+			'estcard',
+		);
+
+		/**
+		 * Gateways offered in the checkout block.
+		 *
+		 * @param string[] $ids Gateway ids.
+		 */
+		return apply_filters( 'woocommerce_estonian_gateways_blocks_gateway_ids', $ids );
+	}
+
+	/**
+	 * Register the gateways with the checkout block
+	 *
+	 * @return void
+	 */
+	public function register_blocks_support() {
+		if ( ! class_exists( 'Automattic\\WooCommerce\\Blocks\\Payments\\Integrations\\AbstractPaymentMethodType' ) ) {
+			return;
+		}
+
+		include_once WC_ESTONIAN_GATEWAYS_INCLUDES_PATH . '/class-wc-estonian-gateways-blocks-support.php';
+
+		add_action(
+			'woocommerce_blocks_payment_method_type_registration',
+			function ( $registry ) {
+				$offered  = array_flip( $this->get_blocks_gateway_ids() );
+				$gateways = WC()->payment_gateways() ? WC()->payment_gateways()->payment_gateways() : array();
+
+				foreach ( $gateways as $gateway ) {
+					if ( $gateway instanceof WC_Banklink && isset( $offered[ $gateway->id ] ) ) {
+						$registry->register( new WC_Estonian_Gateways_Blocks_Support( $gateway ) );
+					}
+				}
+			}
+		);
+	}
+
+	/**
 	 * Declare high performance order storage (COT) compatibility
 	 *
 	 * @return void
@@ -181,6 +252,7 @@ class Estonian_Banklinks_For_WooCommerce {
 	public function declare_wc_cot_compatibility() {
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', WC_ESTONIAN_GATEWAYS_MAIN_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', WC_ESTONIAN_GATEWAYS_MAIN_FILE, true );
 		}
 	}
 
